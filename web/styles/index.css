@@ -79,11 +79,16 @@ nav img {
   margin-left: 12px;
 }
 
+/* Utils */
+.hidden {
+  display: none !important;
+}
+
 /* Content */
 .app {
   min-height: 100vh;
-  padding-top: 96px;
-  padding-bottom: 96px;
+  padding-top: 72px;
+  padding-bottom: 72px;
 }
 
 /* Chart */

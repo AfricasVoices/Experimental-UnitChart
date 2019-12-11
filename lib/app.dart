@@ -1,6 +1,8 @@
 import 'dart:html' as html;
 
 html.DivElement get content => html.querySelector("#content");
+html.DivElement get container => html.querySelector("#container");
+html.DivElement get interactive => html.querySelector("#interactive");
 html.DivElement get progress => html.querySelector("#progress");
 html.ButtonElement get prevButton => html.querySelector("#prev-button");
 html.ButtonElement get nextButton => html.querySelector("#next-button");
@@ -14,43 +16,40 @@ class App {
     _listenToNextClick();
     _listenToShortcuts();
 
+    _showContent(0);
     _renderProgress();
+    container.classes.toggle("hidden", false);
   }
 
   void _listenToPrevClick() {
-    prevButton.onClick.listen((evt) => _goToPrevSlide());
+    prevButton.onClick.listen((_) => _goToSlide(--currentPage));
   }
 
   void _listenToNextClick() {
-    nextButton.onClick.listen((evt) => _goToNextSlide());
+    nextButton.onClick.listen((_) => _goToSlide(++currentPage));
   }
 
   void _listenToShortcuts() {
     html.window.onKeyUp.listen((evt) {
       switch (evt.keyCode) {
         case html.KeyCode.RIGHT:
-          _goToNextSlide();
+          _goToSlide(++currentPage);
           break;
         case html.KeyCode.LEFT:
-          _goToPrevSlide();
+          _goToSlide(--currentPage);
           break;
         default:
       }
     });
   }
 
-  void _goToPrevSlide() {
-    if (currentPage > 0) {
-      --currentPage;
+  void _goToSlide(slideNum) {
+    if (slideNum < 0 || slideNum > maxPageCount - 1) {
+      return;
     }
-    _renderProgress();
-    _updateButtonsState();
-  }
 
-  void _goToNextSlide() {
-    if (currentPage < maxPageCount - 1) {
-      ++currentPage;
-    }
+    currentPage = slideNum;
+    _showContent(currentPage);
     _renderProgress();
     _updateButtonsState();
   }
@@ -74,7 +73,8 @@ class App {
 
     List<num>.generate(maxPageCount, (i) => i).forEach((i) {
       html.SpanElement progressIndicator = html.SpanElement()
-        ..classes = ["flex-grow-1", "footer-progress"];
+        ..classes = ["flex-grow-1", "footer-progress"]
+        ..onClick.listen((_) => _goToSlide(i));
 
       if (i <= currentPage) {
         progressIndicator.classes.add("footer-progress--filled");
@@ -82,5 +82,16 @@ class App {
 
       progress.append(progressIndicator);
     });
+  }
+
+  void _showContent(int slideNum) {
+    for (var i = 0; i < maxPageCount; ++i) {
+      var slide = html.querySelector('div[data-slide="$i"]');
+      if (i == slideNum) {
+        slide.classes.toggle("hidden", false);
+      } else {
+        slide.classes.toggle("hidden", true);
+      }
+    }
   }
 }

@@ -1,0 +1,134 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500);
+@import url("./mobile.css");
+
+:root {
+  --body: #f3f3f3;
+  --nav: rgba(0, 0, 0, 0.8);
+  --nav-title: #f9b600;
+  --footer: #40a1ac;
+  --footer-text: white;
+  --footer-progress: rgba(0, 0, 0, 0.2);
+  --footer-progress--filled: rgba(255, 255, 255, 0.9);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--body);
+  line-height: 1.2em;
+  cursor: default;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 1.2em;
+}
+
+label {
+  display: block;
+  font-size: 0.7em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+
+select {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  line-height: 1.3;
+  padding: 8px 12px;
+  width: 100%;
+  border: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: url('./../images/dropdown.svg');
+  background-repeat: no-repeat, repeat;
+  background-position: right 18px top 16px, 0 0;
+  background-size: 9px auto, 100%;
+  margin-bottom: 12px;
+}
+
+/* Header */
+nav {
+  background-color: var(--nav);
+  color: white;
+  padding: 12px;
+  position: fixed;
+  width: 100%;
+}
+
+nav img {
+  max-height: 18px;
+  max-width: 18px;
+  margin-left: 9px;
+}
+
+.nav-brand {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.nav-title {
+  color: var(--nav-title);
+  margin-left: 12px;
+}
+
+/* Content */
+.app {
+  min-height: 100vh;
+  padding-top: 96px;
+  padding-bottom: 96px;
+}
+
+/* Chart */
+.filter-wrapper {
+  margin-bottom: 18px;
+}
+
+/* Footer */
+footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  background-color: var(--footer);
+}
+
+.footer-button {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px 24px;
+  border: none;
+  color: var(--footer-text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: bold;
+}
+
+.footer-button:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.footer-button:disabled {
+  opacity: 0.3;
+}
+
+.footer-button:disabled:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.footer-progress {
+  height: 4px;
+  margin: 2px;
+  margin-top: 20px;
+  border-radius: 3px;
+  background-color: var(--footer-progress);
+}
+
+.footer-progress--filled {
+  background: var(--footer-progress--filled);
+}

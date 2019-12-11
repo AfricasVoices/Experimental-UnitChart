@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVF</title>
+    <link rel="stylesheet" href="./styles/bootstrap.css">
+    <link rel="stylesheet" href="./styles/index.css">
+    <script defer src="main.dart.js"></script>
+</head>
+
+<body>
+  <!-- Header -->
+  <nav>
+    <div class="row">
+      <div class="col-lg-9 col-sm-8 col-8">
+        <span class="nav-brand">Africa's Voices</span>
+        <span class="nav-title">Live social insights from conversations</span>
+      </div>
+      <div class="col-lg-3 col-sm-4 col-4 text-right">
+        <span class="nav-share-label">Share</span>
+        <img src="./images/facebook.svg" />
+        <img src="./images/twitter.svg" />
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="app" id="content"></div>
+
+  <!-- Bottom navigation -->
+  <footer>
+    <div class="row">
+      <div class="col-lg-2 col-sm-3 col-4">
+        <button class="footer-button" id="prev-button" disabled>
+          ← Prev
+        </button>
+      </div>
+      <div class="col-lg-8 col-sm-6 col-4 text-center">
+        <div id="progress" class="d-flex"></div>
+      </div>
+      <div class="col-lg-2 col-sm-3 col-4 text-right">
+        <button class="footer-button" id="next-button">
+          Next →
+        </button>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

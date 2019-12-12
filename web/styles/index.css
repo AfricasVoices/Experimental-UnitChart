@@ -91,6 +91,14 @@ nav img {
   padding-bottom: 72px;
 }
 
+.filter-wrapper {
+  margin-bottom: 32px;
+}
+
+.filter-wrapper select.filter-option {
+  margin-left: -24px;
+}
+
 /* Chart */
 .filter-wrapper {
   margin-bottom: 18px;

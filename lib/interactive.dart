@@ -2,26 +2,36 @@ import 'dart:html' as html;
 import 'package:avf/model.dart' as model;
 import 'package:avf/firebase.dart';
 
-const filterColumnCSS = ["col-lg-2", "col-md-4", "col-sm-4", "col-4"];
+const filterColumnCSS = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
+const themeColumnCSS = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
 
 class Interactive {
   DB _db;
   List<model.Filter> _filters;
+  List<model.Theme> _themes;
+  List<model.Person> _people;
   model.Selected _selected = model.Selected();
 
   html.DivElement _container;
 
   Interactive(this._container) {
     _db = DB();
-    _loadFilters();
+    _loadInitialData();
   }
 
-  void _loadFilters() async {
+  void _loadInitialData() async {
     var filtersObj = await _db.readFilters();
     _filters = filtersObj.values.map((v) => model.Filter.fromObj(v)).toList()
       ..sort((f1, f2) => f1.order.compareTo(f2.order));
-
     _selected.updateMetric(_filters.first.value);
+
+    var themesObj = await _db.readThemes();
+    _themes = themesObj.values.map((v) => model.Theme.fromObj(v)).toList()
+      ..sort((t1, t2) => t1.order.compareTo(t2.order));
+
+    var peopleList = await _db.readPeople();
+    _people = peopleList.map((p) => model.Person.fromObj(p)).toList();
+
     _render();
   }
 
@@ -113,6 +123,22 @@ class Interactive {
     return filterOptionWrapper;
   }
 
+  html.DivElement _renderLegend() {
+    var legendWrapper = html.DivElement()..classes = ["row"];
+    _themes.forEach((theme) {
+      var legendColumn = html.DivElement()..classes = themeColumnCSS;
+      var legendColor = html.LabelElement()
+        ..className = "legend-item"
+        ..innerText = theme.label
+        ..style.borderLeftColor = theme.color;
+      legendColumn.append(legendColor);
+
+      legendWrapper.append(legendColumn);
+    });
+
+    return legendWrapper;
+  }
+
   void _render() {
     print("render ${_selected.metric} ${_selected.filter} ${_selected.option}");
 
@@ -125,5 +151,6 @@ class Interactive {
 
     _container.children.clear();
     _container.append(filtersWrapper);
+    _container.append(_renderLegend());
   }
 }

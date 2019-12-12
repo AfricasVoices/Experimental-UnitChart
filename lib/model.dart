@@ -6,6 +6,19 @@ class Message {
   bool isResponse;
 }
 
+class Theme {
+  String value;
+  String label;
+  int order;
+  String color;
+
+  Theme(this.value, this.label, this.order, this.color);
+
+  factory Theme.fromObj(Map<String, dynamic> obj) {
+    return Theme(obj["value"], obj["label"], obj["order"], obj["color"]);
+  }
+}
+
 class Person {
   num age;
   String age_category;
@@ -14,6 +27,17 @@ class Person {
   String location;
   List<String> themes;
   int messageCount;
+
+  Person(this.age, this.age_category, this.gender, this.IDPStatus,
+      this.location, this.themes, this.messageCount);
+
+  factory Person.fromObj(Map<String, dynamic> obj) {
+    var themes =
+        (obj["themes"] as List).map((theme) => theme.toString()).toList();
+
+    return Person(obj["age"], obj["age_category"], obj["gender"],
+        obj["idp_status"], obj["location"], themes, obj["messageCount"]);
+  }
 }
 
 class UnitChart {

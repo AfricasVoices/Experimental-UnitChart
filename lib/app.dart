@@ -17,7 +17,7 @@ class App {
     _listenToNextClick();
     _listenToShortcuts();
 
-    _showContent(0);
+    _showContent(_currentPage);
     _renderProgress();
     container.classes.toggle("hidden", false);
     interactive.Interactive(interactiveContainer);

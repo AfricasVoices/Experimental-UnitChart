@@ -8,11 +8,12 @@ class Message {
 
 class Person {
   num age;
+  String age_category;
   String gender;
   String IDPStatus;
   String location;
   List<String> themes;
-  List<Message> messages;
+  int messageCount;
 }
 
 class UnitChart {

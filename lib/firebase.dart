@@ -26,8 +26,8 @@ class DB {
   // test filters
   void writeFilter() async {
     var filters = {
-      "age": {
-        "value": "age",
+      "age_category": {
+        "value": "age_category",
         "label": "Age",
         "order": 0,
         "options": [

@@ -1,0 +1,9 @@
+{
+  "apiKey": "AIzaSyB3nbxl4cH5opeqmXSyRZMANoUMIlTch80",
+  "authDomain": "avf-metrics.firebaseapp.com",
+  "databaseURL": "https://avf-metrics.firebaseio.com",
+  "projectId": "avf-metrics",
+  "storageBucket": "avf-metrics.appspot.com",
+  "messagingSenderId": "542922892166",
+  "appId": "1:542922892166:web:cd7ae2802395a9f652c207"
+}

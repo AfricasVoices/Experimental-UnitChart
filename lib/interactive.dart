@@ -1,23 +1,26 @@
 import 'dart:html' as html;
 import 'package:avf/model.dart' as model;
-import 'package:avf/firebase.dart';
+import 'package:avf/firebase.dart' as fb;
 
 const filterColumnCSS = ["col-lg-2", "col-md-4", "col-sm-4", "col-4"];
 
 class Interactive {
-  DB _db;
   List<model.Filter> _filters;
   model.Selected _selected = model.Selected();
 
   html.DivElement _container;
 
   Interactive(this._container) {
-    _db = DB();
+    init();
+  }
+
+  init() async {
+    await fb.init();
     _loadFilters();
   }
 
   void _loadFilters() async {
-    var filtersObj = await _db.readFilters();
+    var filtersObj = await fb.readFilters();
     _filters = filtersObj.values.map((v) => model.Filter.fromObj(v)).toList()
       ..sort((f1, f2) => f1.order.compareTo(f2.order));
 

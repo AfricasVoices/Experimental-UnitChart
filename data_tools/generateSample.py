@@ -1,5 +1,9 @@
 import validators
+import random
+import uuid
+from random import randint
 
+# Themes
 themesSample = {
     "anti_corruption": {
         "color": "#3a8789",
@@ -54,6 +58,7 @@ def themes():
     return themesSample
 
 
+# Filters
 filtersSample = {
     "age_category": {
         "value": "age_category",
@@ -103,3 +108,56 @@ def validateFilters(filters):
 def filters():
     validateFilters(filtersSample)
     return filtersSample
+
+# People
+
+
+def getAgeRange(age):
+    if (age >= 18 and age <= 35):
+        return "18_35"
+    elif (age > 35 and age <= 50):
+        return "35_50"
+    elif (age > 50 and age <= 65):
+        return "50_65"
+    else:
+        print("Age not within range")
+        return 0
+
+
+def randGender():
+    genders = ["male", "female", "unknown"]
+    return random.choice(genders)
+
+
+def randIDPStatus():
+    status = ["status_a", "status_b", "status_c"]
+    return random.choice(status)
+
+
+def randLocation():
+    location = ["Mogadishu", "Hargeysa",
+                "Merca", "Berbera", "Kismaayo", "Borama"]
+    return random.choice(location)
+
+
+def randThemes():
+    themes = list(themesSample.keys())
+    return random.sample(themes, randint(1, 3))
+
+
+def samplePeople(i):
+    age = randint(18, 65)
+    return {
+        "id": str(i),
+        "age": age,
+        "age_category": getAgeRange(age),
+        "gender": randGender(),
+        "idp_status": randIDPStatus(),
+        "location": randLocation(),
+        "themes": randThemes(),
+        "message_count": randint(3, 50)
+    }
+
+
+def people(count):
+    return list(map(samplePeople, list(range(count))))

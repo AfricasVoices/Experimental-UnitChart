@@ -5,6 +5,7 @@ import 'package:avf/model.dart' as model;
 
 firestore.DocumentReference _filtersRef;
 firestore.DocumentReference _themesRef;
+firestore.CollectionReference _peopleRef;
 
 init() async {
   await fb_constants.init();
@@ -25,6 +26,10 @@ init() async {
   _themesRef = _store
       .collection(fb_constants.chartCollection)
       .doc(fb_constants.themesDoc);
+  _peopleRef = _store
+      .collection(fb_constants.chartCollection)
+      .doc(fb_constants.dataDoc)
+      .collection(fb_constants.peopleCollection);
 }
 
 Future<List<model.Filter>> readFilters() async {
@@ -37,4 +42,11 @@ Future<List<model.Theme>> readThemes() async {
   var snapshot = await _themesRef.get();
   return snapshot.data().values.map((v) => model.Theme.fromObj(v)).toList()
     ..sort((t1, t2) => t1.order.compareTo(t2.order));
+}
+
+Future<List<model.Person>> readPeople() async {
+  var snapshot = await _peopleRef.get();
+  List<Map<String, dynamic>> peopleList = [];
+  snapshot.forEach((doc) => peopleList.add(doc.data()));
+  return peopleList.map((p) => model.Person.fromObj(p)).toList();
 }

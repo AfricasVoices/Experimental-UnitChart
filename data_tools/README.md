@@ -3,4 +3,4 @@ Firebase console > project settings > service accounts
 Add the Firebase Service Account secret as `serviceAccount.json` into the current folder
 
 # Write sample
-`python writeSample.py -w <themes|filters>`
+`python writeSample.py -w <themes|filters|people>`

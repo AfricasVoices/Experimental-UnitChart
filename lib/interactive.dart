@@ -27,6 +27,7 @@ class Interactive {
     _selected.updateMetric(_filters.first.value);
 
     _themes = await fb.readThemes();
+    _people = await fb.readPeople();
 
     _render();
   }

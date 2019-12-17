@@ -8,5 +8,7 @@
   "appId": "1:542922892166:web:cd7ae2802395a9f652c207",
   "chartCollection": "unit-chart",
   "filtersDoc": "filters",
-  "themesDoc": "themes"
+  "themesDoc": "themes",
+  "dataDoc": "data",
+  "peopleCollection": "people"
 }

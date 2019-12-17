@@ -12,6 +12,9 @@ class App {
   int _currentPage = 0;
   int _maxPageCount = container.children.length;
 
+  int get firstPageIndex => 0;
+  int get lastPageIndex => _maxPageCount - 1;
+
   App() {
     _listenToPrevClick();
     _listenToNextClick();
@@ -46,7 +49,7 @@ class App {
   }
 
   void _goToSlide(slideNum) {
-    if (slideNum < 0 || slideNum > _maxPageCount - 1) {
+    if (slideNum < firstPageIndex || slideNum > lastPageIndex) {
       return;
     }
 
@@ -57,13 +60,13 @@ class App {
   }
 
   void _updateButtonsState() {
-    if (_currentPage <= 0) {
+    if (_currentPage <= firstPageIndex) {
       prevButton.disabled = true;
     } else {
       prevButton.disabled = false;
     }
 
-    if (_currentPage >= _maxPageCount - 1) {
+    if (_currentPage >= lastPageIndex) {
       nextButton.disabled = true;
     } else {
       nextButton.disabled = false;

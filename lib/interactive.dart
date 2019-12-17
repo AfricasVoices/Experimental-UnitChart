@@ -1,12 +1,11 @@
 import 'dart:html' as html;
 import 'package:avf/model.dart' as model;
-import 'package:avf/firebase.dart';
+import 'package:avf/firebase.dart' as fb;
 
 const filterColumnCSS = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
 const themeColumnCSS = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
 
 class Interactive {
-  DB _db;
   List<model.Filter> _filters;
   List<model.Theme> _themes;
   List<model.Person> _people;
@@ -15,22 +14,19 @@ class Interactive {
   html.DivElement _container;
 
   Interactive(this._container) {
-    _db = DB();
-    _loadInitialData();
+    init();
   }
 
-  void _loadInitialData() async {
-    var filtersObj = await _db.readFilters();
-    _filters = filtersObj.values.map((v) => model.Filter.fromObj(v)).toList()
-      ..sort((f1, f2) => f1.order.compareTo(f2.order));
+  init() async {
+    await fb.init();
+    _loadFilters();
+  }
+
+  void _loadFilters() async {
+    _filters = await fb.readFilters();
     _selected.updateMetric(_filters.first.value);
 
-    var themesObj = await _db.readThemes();
-    _themes = themesObj.values.map((v) => model.Theme.fromObj(v)).toList()
-      ..sort((t1, t2) => t1.order.compareTo(t2.order));
-
-    var peopleList = await _db.readPeople();
-    _people = peopleList.map((p) => model.Person.fromObj(p)).toList();
+    _themes = await fb.readThemes();
 
     _render();
   }

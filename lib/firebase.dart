@@ -1,6 +1,7 @@
 import 'package:firebase/firebase.dart' as firebase;
 import 'package:firebase/firestore.dart' as firestore;
 import 'firebase_constants.dart' as fb_constants;
+import 'package:avf/model.dart' as model;
 
 firestore.DocumentReference _filtersRef;
 
@@ -22,7 +23,8 @@ init() async {
       .doc(fb_constants.filtersDoc);
 }
 
-Future<Map<String, dynamic>> readFilters() async {
+Future<List<model.Filter>> readFilters() async {
   var snapshot = await _filtersRef.get();
-  return snapshot.data();
+  return snapshot.data().values.map((v) => model.Filter.fromObj(v)).toList()
+    ..sort((f1, f2) => f1.order.compareTo(f2.order));
 }

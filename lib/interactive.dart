@@ -20,10 +20,7 @@ class Interactive {
   }
 
   void _loadFilters() async {
-    var filtersObj = await fb.readFilters();
-    _filters = filtersObj.values.map((v) => model.Filter.fromObj(v)).toList()
-      ..sort((f1, f2) => f1.order.compareTo(f2.order));
-
+    _filters = await fb.readFilters();
     _selected.updateMetric(_filters.first.value);
     _render();
   }

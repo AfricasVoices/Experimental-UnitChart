@@ -22,3 +22,5 @@ doc/api/
 .DS_Store
 
 web/assets/firebase_constants.json
+data_tools/serviceAccount.json
+__pycache__

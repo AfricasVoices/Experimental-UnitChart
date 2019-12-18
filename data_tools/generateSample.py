@@ -184,6 +184,7 @@ def sampleMessages(i):
         isResponse = random.choice([True, False])
         themes = list(themesSample.keys())
         theme = None if not isResponse else random.choice(themes)
+        theme = theme if randint(0, 1) % 2 == 0 else None
         message = {
             "id": str(i),
             "text": lorem.sentence(),

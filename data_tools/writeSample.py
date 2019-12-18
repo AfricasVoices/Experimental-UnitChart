@@ -1,8 +1,9 @@
+import sys
 import argparse
 import firebase as fb
 import generateSample
 
-chartCollection = fb.db.collection('unit-chart')
+chartCollection = None
 
 
 def themes():
@@ -17,17 +18,25 @@ def filters():
     print("Filters updated successfully")
 
 
-# usage python writeSample.py -w <themes|filters>
-# initiate the parser
+# usage python3 writeSample.py </path/to/fb_secret.json> <themes|filters>
 parser = argparse.ArgumentParser()
-parser.add_argument("-w", "--write", help="Option to write (themes|filters)")
-
-# read arguments from the command line
+parser.add_argument("secret",
+                    help="Firebase service account secret json's file path")
+parser.add_argument("option",
+                    help="Option to write (themes|filters)")
 args = parser.parse_args()
 
-if args.write == "themes":
+if args.secret:
+    fb.init(args.secret)
+    chartCollection = fb.db.collection('unit-chart')
+else:
+    print("ERROR: Path to Firebase secret not found. Use python3 writeSample.py </path/to/fb_secret.json> <themes|filters>")
+    sys.exit()
+
+if args.option == "themes":
     themes()
-elif args.write == "filters":
+elif args.option == "filters":
     filters()
 else:
-    print("Unknown option. use -w themes|filters")
+    print("ERROR: Unknown option. Use python3 writeSample.py </path/to/fb_secret.json> <themes|filters>")
+    sys.exit()

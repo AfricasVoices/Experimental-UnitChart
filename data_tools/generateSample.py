@@ -1,6 +1,9 @@
+#!/bin/env python
 import validators
 import random
 import uuid
+import datetime
+import lorem
 from random import randint
 
 themesSample = {
@@ -173,3 +176,28 @@ def people(count):
     peopleList = list(map(samplePeople, list(range(count))))
     validatePeople(peopleList)
     return peopleList
+
+
+def sampleMessages(i):
+    messages = list()
+    for i in range(randint(5, 20)):
+        isResponse = random.choice([True, False])
+        themes = list(themesSample.keys())
+        theme = None if not isResponse else random.choice(themes)
+        message = {
+            "id": str(i),
+            "text": lorem.sentence(),
+            "theme": theme,
+            "time": datetime.datetime(2020, 1, 1, i+1, 0, 0),
+            "is_response": isResponse
+        }
+        messages.append(message)
+    return messages
+
+
+def messages(i):
+    messagesList = list()
+    for i in range(i):
+        messages = sampleMessages(i)
+        messagesList.append(messages)
+    return messagesList

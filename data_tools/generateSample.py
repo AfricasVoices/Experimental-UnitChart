@@ -195,9 +195,20 @@ def sampleMessages(i):
     return messages
 
 
+def validateMessages(messages):
+    for message in messages:
+        validators.validate_string(message["id"])
+        validators.validate_string(message["text"])
+        if message["theme"] is not None:
+            validators.validate_string(message["theme"])
+        validators.validate_datetime(message["time"])
+        validators.validate_bool(message["is_response"])
+
+
 def messages(i):
     messagesList = list()
     for i in range(i):
         messages = sampleMessages(i)
+        validateMessages(messages)
         messagesList.append(messages)
     return messagesList

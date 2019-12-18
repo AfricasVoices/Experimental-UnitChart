@@ -14,6 +14,16 @@ class Person {
   String location;
   List<String> themes;
   int messageCount;
+
+  Person(this.age, this.age_category, this.gender, this.IDPStatus,
+      this.location, this.themes, this.messageCount);
+
+  factory Person.fromObj(Map<String, dynamic> obj) {
+    List<String> themes =
+        (obj["themes"] as List).map((t) => t.toString()).toList();
+    return Person(obj["age"], obj["age_category"], obj["gender"],
+        obj["IDPStatus"], obj["location"], themes, obj["messageCount"]);
+  }
 }
 
 class UnitChart {

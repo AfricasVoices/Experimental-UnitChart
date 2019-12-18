@@ -51,6 +51,19 @@ class Filter {
   }
 }
 
+class Theme {
+  String value;
+  String label;
+  int order;
+  String color;
+
+  Theme(this.value, this.label, this.order, this.color);
+
+  factory Theme.fromObj(Map<String, dynamic> obj) {
+    return Theme(obj["value"], obj["label"], obj["order"], obj["color"]);
+  }
+}
+
 class Selected {
   String _metric;
   String _filter;

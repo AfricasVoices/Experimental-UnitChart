@@ -104,6 +104,14 @@ nav img {
   margin-bottom: 18px;
 }
 
+.legend-item {
+  padding-left: 6px;
+  border-left: 6px solid;
+  height: calc(100% - 6px);
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
 /* Footer */
 footer {
   position: fixed;

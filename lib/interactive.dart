@@ -2,10 +2,12 @@ import 'dart:html' as html;
 import 'package:avf/model.dart' as model;
 import 'package:avf/firebase.dart' as fb;
 
-const filterColumnCSS = ["col-lg-2", "col-md-4", "col-sm-4", "col-4"];
+const filterColumnCSS = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
+const themeColumnCSS = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
 
 class Interactive {
   List<model.Filter> _filters;
+  List<model.Theme> _themes;
   model.Selected _selected = model.Selected();
 
   html.DivElement _container;
@@ -21,6 +23,7 @@ class Interactive {
 
   void _loadFilters() async {
     _filters = await fb.readFilters();
+    _themes = await fb.readThemes();
     _selected.updateMetric(_filters.first.value);
     _render();
   }
@@ -113,6 +116,22 @@ class Interactive {
     return filterOptionWrapper;
   }
 
+  html.DivElement _renderLegend() {
+    var legendWrapper = html.DivElement()..classes = ["row"];
+    _themes.forEach((theme) {
+      var legendColumn = html.DivElement()..classes = themeColumnCSS;
+      var legendColor = html.LabelElement()
+        ..className = "legend-item"
+        ..innerText = theme.label
+        ..style.borderLeftColor = theme.color;
+      legendColumn.append(legendColor);
+
+      legendWrapper.append(legendColumn);
+    });
+
+    return legendWrapper;
+  }
+
   void _render() {
     print("render ${_selected.metric} ${_selected.filter} ${_selected.option}");
 
@@ -125,5 +144,6 @@ class Interactive {
 
     _container.children.clear();
     _container.append(filtersWrapper);
+    _container.append(_renderLegend());
   }
 }

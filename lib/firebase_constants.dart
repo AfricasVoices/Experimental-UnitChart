@@ -23,3 +23,4 @@ String get messagingSenderId => _constants['messagingSenderId'];
 String get appId => _constants['appId'];
 String get chartCollection => _constants['chartCollection'];
 String get filtersDoc => _constants['filtersDoc'];
+String get themesDoc => _constants['themesDoc'];

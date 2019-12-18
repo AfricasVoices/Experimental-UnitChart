@@ -1,42 +1,53 @@
 import sys
+import json
 import argparse
 import firebase as fb
 import generateSample
 
-chartCollection = None
 
-
-def themes():
+def themes(fbConfig):
     themes = generateSample.themes()
-    chartCollection.document(u'themes').set(themes)
+    fb.db.collection(fbConfig["chartCollection"]).document(
+        fbConfig['themesDoc']).set(themes)
     print("Themes updated successfully")
 
 
-def filters():
+def filters(fbConfig):
     filters = generateSample.filters()
-    chartCollection.document(u'filters').set(filters)
+    fb.db.collection(fbConfig["chartCollection"]).document(
+        fbConfig['filtersDoc']).set(filters)
     print("Filters updated successfully")
 
 
-# usage python3 writeSample.py </path/to/fb_secret.json> <themes|filters>
+# usage python3 writeSample.py </path/to/fb_secret.json> </path/to/fb_const.json> <themes|filters>
 parser = argparse.ArgumentParser()
 parser.add_argument("secret",
                     help="Firebase service account secret json's file path")
+parser.add_argument("fbconst",
+                    help="Firebase constants file path")
 parser.add_argument("option",
                     help="Option to write (themes|filters)")
 args = parser.parse_args()
 
-if args.secret:
-    fb.init(args.secret)
-    chartCollection = fb.db.collection('unit-chart')
-else:
-    print("ERROR: Path to Firebase secret not found. Use python3 writeSample.py </path/to/fb_secret.json> <themes|filters>")
+if args.secret is None:
+    print("ERROR: Path to Firebase secret not found.")
     sys.exit()
 
-if args.option == "themes":
-    themes()
-elif args.option == "filters":
-    filters()
-else:
-    print("ERROR: Unknown option. Use python3 writeSample.py </path/to/fb_secret.json> <themes|filters>")
+if args.fbconst is None:
+    print("ERROR: Path to Firebase constants not found.")
     sys.exit()
+
+if args.option not in ["themes", "filters"]:
+    print("ERROR: Unknown option. <themes|filters>")
+    sys.exit()
+
+fb.init(args.secret)
+f = open(args.fbconst, "r")
+contents = f.read()
+f.close()
+fbConfig = json.loads(contents)
+
+if args.option == "themes":
+    themes(fbConfig)
+elif args.option == "filters":
+    filters(fbConfig)

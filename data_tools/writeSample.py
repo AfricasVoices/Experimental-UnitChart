@@ -19,6 +19,15 @@ def filters(fbConfig):
     print("Filters updated successfully")
 
 
+def people(fbConfig):
+    people = generateSample.people(10)
+    peopleCollection = fb.db.collection(fbConfig["chartCollection"]).document(
+        fbConfig["dataDoc"]).collection(fbConfig["peopleCollection"])
+    for person in people:
+        peopleCollection.document(person["id"]).set(person)
+    print(len(people), "people updated successfully")
+
+
 # usage python3 writeSample.py </path/to/fb_secret.json> </path/to/fb_const.json> <themes|filters>
 parser = argparse.ArgumentParser()
 parser.add_argument("secret",
@@ -37,8 +46,8 @@ if args.fbconst is None:
     print("ERROR: Path to Firebase constants not found.")
     sys.exit()
 
-if args.option not in ["themes", "filters"]:
-    print("ERROR: Unknown option. <themes|filters>")
+if args.option not in ["themes", "filters", "people"]:
+    print("ERROR: Unknown option. <themes|filters|people>")
     sys.exit()
 
 fb.init(args.secret)
@@ -51,3 +60,5 @@ if args.option == "themes":
     themes(fbConfig)
 elif args.option == "filters":
     filters(fbConfig)
+elif args.option == "people":
+    people(fbConfig)

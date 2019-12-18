@@ -1,4 +1,7 @@
 import validators
+import random
+import uuid
+from random import randint
 
 themesSample = {
     "anti_corruption": {
@@ -103,3 +106,70 @@ def validateFilters(filters):
 def filters():
     validateFilters(filtersSample)
     return filtersSample
+
+
+def getAgeRange(age):
+    if (age >= 18 and age <= 35):
+        return "18_35"
+    elif (age > 35 and age <= 50):
+        return "35_50"
+    elif (age > 50 and age <= 65):
+        return "50_65"
+    else:
+        print("Age not within range")
+        return 0
+
+
+def randGender():
+    genders = ["male", "female", "unknown"]
+    return random.choice(genders)
+
+
+def randIDPStatus():
+    status = ["status_a", "status_b", "status_c"]
+    return random.choice(status)
+
+
+def randLocation():
+    location = ["Mogadishu", "Hargeysa",
+                "Merca", "Berbera", "Kismaayo", "Borama"]
+    return random.choice(location)
+
+
+def randThemes():
+    themes = list(themesSample.keys())
+    return random.sample(themes, randint(1, 3))
+
+
+def samplePeople(i):
+    age = randint(18, 65)
+    return {
+        "id": str(i),
+        "age": age,
+        "age_category": getAgeRange(age),
+        "gender": randGender(),
+        "idp_status": randIDPStatus(),
+        "location": randLocation(),
+        "themes": randThemes(),
+        "message_count": randint(3, 50)
+    }
+
+
+def validatePeople(people):
+    for person in people:
+        validators.validate_string(person["id"])
+        validators.validate_int(person["age"])
+        validators.validate_string(person["age_category"])
+        validators.validate_string(person["gender"])
+        validators.validate_string(person["idp_status"])
+        validators.validate_string(person["location"])
+        validators.validate_list(person["themes"])
+        for theme in person["themes"]:
+            validators.validate_string(theme)
+        validators.validate_int(person["message_count"])
+
+
+def people(count):
+    peopleList = list(map(samplePeople, list(range(count))))
+    validatePeople(peopleList)
+    return peopleList

@@ -1,15 +1,16 @@
 import 'dart:html' as html;
+import 'package:avf/interactive.dart' as interactive;
 
 html.DivElement get content => html.querySelector("#content");
 html.DivElement get container => html.querySelector("#container");
-html.DivElement get interactive => html.querySelector("#interactive");
+html.DivElement get interactiveContainer => html.querySelector("#interactive");
 html.DivElement get progress => html.querySelector("#progress");
 html.ButtonElement get prevButton => html.querySelector("#prev-button");
 html.ButtonElement get nextButton => html.querySelector("#next-button");
 
 class App {
   int _currentPage = 0;
-  int _maxPageCount = 10;
+  int _maxPageCount = container.children.length;
 
   int get firstPageIndex => 0;
   int get lastPageIndex => _maxPageCount - 1;
@@ -19,9 +20,10 @@ class App {
     _listenToNextClick();
     _listenToShortcuts();
 
-    _showContent(0);
+    _showContent(_currentPage);
     _renderProgress();
     container.classes.toggle("hidden", false);
+    interactive.Interactive(interactiveContainer);
   }
 
   void _listenToPrevClick() {

@@ -4,6 +4,9 @@ description: A interactive chart of messages
 environment:
   sdk: '>=2.1.0 <3.0.0'
 
+dependencies:
+  firebase: ^7.1.0
+
 dev_dependencies:
   build_runner: ^1.1.2
   build_web_compilers: ^2.0.0

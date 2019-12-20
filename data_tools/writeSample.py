@@ -32,10 +32,8 @@ def messages(fbConfig):
     messages = generateSample.messages(10)
     messagesCollection = fb.db.collection(fbConfig["chartCollection"]).document(
         fbConfig["dataDoc"]).collection(fbConfig["messagesCollection"])
-    i = 0
-    for message in messages:
-        messagesCollection.document(str(i)).set({"messages": message})
-        i = i+1
+    for i in range(0, len(messages)):
+        messagesCollection.document(str(i)).set({"messages": messages[i]})
     print(len(messages), "messages updated successfully")
 
 

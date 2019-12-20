@@ -28,10 +28,10 @@ def people(fbConfig):
     print(len(people), "people updated successfully")
 
 
-# usage python3 writeSample.py </path/to/fb_secret.json> </path/to/fb_const.json> <themes|filters>
+# usage python3 writeSample.py </path/to/fb_service_account.json> </path/to/fb_const.json> <themes|filters>
 parser = argparse.ArgumentParser()
 parser.add_argument("secret",
-                    help="Firebase service account secret json's file path")
+                    help="Firebase service account json's file path")
 parser.add_argument("fbconst",
                     help="Firebase constants file path")
 parser.add_argument("option",
@@ -39,7 +39,7 @@ parser.add_argument("option",
 args = parser.parse_args()
 
 if args.secret is None:
-    print("ERROR: Path to Firebase secret not found.")
+    print("ERROR: Path to Firebase service account json not found.")
     sys.exit()
 
 if args.fbconst is None:

@@ -34,14 +34,22 @@ init() async {
 
 Future<List<model.Filter>> readFilters() async {
   var snapshot = await _filtersRef.get();
-  return snapshot.data().values.map((v) => model.Filter.fromObj(v)).toList()
-    ..sort((f1, f2) => f1.order.compareTo(f2.order));
+  return snapshot
+      .data()
+      .values
+      .map((v) => model.Filter.fromFirebaseMap(v))
+      .toList()
+        ..sort((f1, f2) => f1.order.compareTo(f2.order));
 }
 
 Future<List<model.Theme>> readThemes() async {
   var snapshot = await _themesRef.get();
-  return snapshot.data().values.map((v) => model.Theme.fromObj(v)).toList()
-    ..sort((t1, t2) => t1.order.compareTo(t2.order));
+  return snapshot
+      .data()
+      .values
+      .map((v) => model.Theme.fromFirebaseMap(v))
+      .toList()
+        ..sort((t1, t2) => t1.order.compareTo(t2.order));
 }
 
 Future<List<model.Person>> readPeople(String filter, String option) async {
@@ -57,5 +65,5 @@ Future<List<model.Person>> readPeople(String filter, String option) async {
     peopleList.add(doc.data());
   });
 
-  return peopleList.map((v) => model.Person.fromObj(v)).toList();
+  return peopleList.map((v) => model.Person.fromFirebaseMap(v)).toList();
 }

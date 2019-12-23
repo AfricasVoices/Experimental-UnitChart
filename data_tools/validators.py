@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def validate_string(s, variable_name=""):
     assert isinstance(s, str), "{} not a string".format(variable_name)
     assert s != "", "{} is empty".format(variable_name)
@@ -29,3 +32,8 @@ def validate_hexcolor(c, variable_name=""):
     assert c.startswith("#")
     assert len(c) == 7
     return c
+
+
+def validate_datetime(d, variable_name=""):
+    assert isinstance(d, datetime), "{} not a datetime".format(variable_name)
+    return d

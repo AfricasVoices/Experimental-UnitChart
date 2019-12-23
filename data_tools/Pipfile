@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 firebase-admin = "*"
 google-cloud-firestore = "*"
+lorem = "*"
 
 [requires]
 python_version = "3.8"

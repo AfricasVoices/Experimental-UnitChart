@@ -1,7 +1,10 @@
 import 'dart:html' as html;
 import 'dart:svg' as svg;
+import 'package:avf/logger.dart';
 import 'package:avf/model.dart' as model;
 import 'package:avf/firebase.dart' as fb;
+
+Logger logger = Logger("interactive.dart");
 
 const BS_ROW_CSS = "row";
 const filterColumnCSS = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
@@ -64,6 +67,7 @@ class Interactive {
 
   void _loadPeople() async {
     _people = await fb.readPeople(_selected.filter, _selected.option);
+    logger.log("${_people.length} people loaded");
   }
 
   html.DivElement _renderMetricDropdown() {
@@ -185,6 +189,7 @@ class Interactive {
           key = people.idp_status;
           break;
         default:
+          logger.error("Selected metric ${_selected.metric} not found");
       }
       groupPeople[key].add(people);
     });

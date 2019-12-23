@@ -19,10 +19,28 @@ def filters(fbConfig):
     print("Filters updated successfully")
 
 
-# usage python3 writeSample.py </path/to/fb_secret.json> </path/to/fb_const.json> <themes|filters>
+def people(fbConfig):
+    people = generateSample.people(10)
+    peopleCollection = fb.db.collection(fbConfig["chartCollection"]).document(
+        fbConfig["dataDoc"]).collection(fbConfig["peopleCollection"])
+    for person in people:
+        peopleCollection.document(person["id"]).set(person)
+    print(len(people), "people updated successfully")
+
+
+def messages(fbConfig):
+    messages = generateSample.messages(10)
+    messagesCollection = fb.db.collection(fbConfig["chartCollection"]).document(
+        fbConfig["dataDoc"]).collection(fbConfig["messagesCollection"])
+    for i in range(0, len(messages)):
+        messagesCollection.document(str(i)).set({"messages": messages[i]})
+    print(len(messages), "messages updated successfully")
+
+
+# usage python3 writeSample.py </path/to/fb_service_account.json> </path/to/fb_const.json> <themes|filters>
 parser = argparse.ArgumentParser()
 parser.add_argument("secret",
-                    help="Firebase service account secret json's file path")
+                    help="Firebase service account json's file path")
 parser.add_argument("fbconst",
                     help="Firebase constants file path")
 parser.add_argument("option",
@@ -30,15 +48,15 @@ parser.add_argument("option",
 args = parser.parse_args()
 
 if args.secret is None:
-    print("ERROR: Path to Firebase secret not found.")
+    print("ERROR: Path to Firebase service account json not found.")
     sys.exit()
 
 if args.fbconst is None:
     print("ERROR: Path to Firebase constants not found.")
     sys.exit()
 
-if args.option not in ["themes", "filters"]:
-    print("ERROR: Unknown option. <themes|filters>")
+if args.option not in ["themes", "filters", "people", "messages"]:
+    print("ERROR: Unknown option. <themes|filters|people|messages>")
     sys.exit()
 
 fb.init(args.secret)
@@ -51,3 +69,7 @@ if args.option == "themes":
     themes(fbConfig)
 elif args.option == "filters":
     filters(fbConfig)
+elif args.option == "people":
+    people(fbConfig)
+elif args.option == "messages":
+    messages(fbConfig)

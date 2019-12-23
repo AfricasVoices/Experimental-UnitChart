@@ -14,6 +14,16 @@ class Person {
   String location;
   List<String> themes;
   int messageCount;
+
+  Person(this.age, this.age_category, this.gender, this.IDPStatus,
+      this.location, this.themes, this.messageCount);
+
+  factory Person.fromFirebaseMap(Map<String, dynamic> obj) {
+    List<String> themes =
+        (obj["themes"] as List).map((t) => t.toString()).toList();
+    return Person(obj["age"], obj["age_category"], obj["gender"],
+        obj["IDPStatus"], obj["location"], themes, obj["messageCount"]);
+  }
 }
 
 class UnitChart {
@@ -30,7 +40,7 @@ class Option {
 
   Option(this.value, this.label);
 
-  factory Option.fromObj(Map<String, dynamic> obj) {
+  factory Option.fromFirebaseMap(Map<String, dynamic> obj) {
     return Option(obj["value"], obj["label"]);
   }
 }
@@ -43,9 +53,9 @@ class Filter {
 
   Filter(this.value, this.label, this.order, this.options);
 
-  factory Filter.fromObj(Map<String, dynamic> obj) {
+  factory Filter.fromFirebaseMap(Map<String, dynamic> obj) {
     var options = (obj["options"] as List)
-        .map((option) => Option.fromObj(option))
+        .map((option) => Option.fromFirebaseMap(option))
         .toList();
     return Filter(obj["value"], obj["label"], obj["order"], options);
   }
@@ -59,7 +69,7 @@ class Theme {
 
   Theme(this.value, this.label, this.order, this.color);
 
-  factory Theme.fromObj(Map<String, dynamic> obj) {
+  factory Theme.fromFirebaseMap(Map<String, dynamic> obj) {
     return Theme(obj["value"], obj["label"], obj["order"], obj["color"]);
   }
 }

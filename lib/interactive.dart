@@ -1,9 +1,22 @@
 import 'dart:html' as html;
+import 'dart:svg' as svg;
 import 'package:avf/model.dart' as model;
 import 'package:avf/firebase.dart' as fb;
 
+const BS_ROW_CSS = "row";
 const filterColumnCSS = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
 const themeColumnCSS = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
+
+const CHART_PADDING = 18;
+const CHART_HEIGHT = 480;
+const CHART_XAXIS_HEIGHT = 25;
+
+const FILTER_WRAPPER_CSS = "filter-wrapper";
+const FILTER_OPTION_CSS = "filter-option";
+const CHART_WRAPPER_CSS = "chart-wrapper";
+const XAXIS_CSS = "x-axis";
+const XAXIS_LABEL_CSS = "x-axis--label";
+const LEGEND_ITEM_CSS = "legend-item";
 
 class Interactive {
   List<model.Filter> _filters;
@@ -102,7 +115,7 @@ class Interactive {
     var filterOptionWrapper = html.DivElement()..classes = filterColumnCSS;
     var filterOptionLabel = html.LabelElement()..innerText = ".";
     var filterOptionSelect = html.SelectElement()
-      ..classes = ["filter-option"]
+      ..classes = [FILTER_OPTION_CSS]
       ..onChange.listen(
           (e) => _updateFilterOption((e.target as html.SelectElement).value));
     var emptyOption = html.OptionElement()
@@ -126,12 +139,44 @@ class Interactive {
     return filterOptionWrapper;
   }
 
+  html.DivElement _renderChart() {
+    var chartWrapper = html.DivElement()..classes = [CHART_WRAPPER_CSS];
+    var chartWidth = _container.offset.width - 2 * CHART_PADDING;
+
+    var svgContainer = svg.SvgSvgElement()
+      ..style.width = "${chartWidth}px"
+      ..style.height = "${CHART_HEIGHT}px";
+
+    var xAxisLine = svg.LineElement()
+      ..classes = [XAXIS_CSS]
+      ..setAttribute("x1", "0")
+      ..setAttribute("y1", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT}")
+      ..setAttribute("x2", "${chartWidth}")
+      ..setAttribute("y2", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT}");
+    svgContainer.append(xAxisLine);
+
+    var xAxisCategories = _filters
+        .firstWhere((filter) => filter.value == _selected.metric)
+        .options;
+    for (var i = 0; i < xAxisCategories.length; ++i) {
+      var text = svg.TextElement()
+        ..appendText(xAxisCategories[i].label)
+        ..classes = [XAXIS_LABEL_CSS]
+        ..setAttribute(
+            "x", "${(i + 0.5) * (chartWidth / xAxisCategories.length)}")
+        ..setAttribute("y", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT / 4}");
+      svgContainer.append(text);
+    }
+
+    return chartWrapper..append(svgContainer);
+  }
+
   html.DivElement _renderLegend() {
-    var legendWrapper = html.DivElement()..classes = ["row"];
+    var legendWrapper = html.DivElement()..classes = [BS_ROW_CSS];
     _themes.forEach((theme) {
       var legendColumn = html.DivElement()..classes = themeColumnCSS;
       var legendColor = html.LabelElement()
-        ..className = "legend-item"
+        ..classes = [LEGEND_ITEM_CSS]
         ..innerText = theme.label
         ..style.borderLeftColor = theme.color;
       legendColumn.append(legendColor);
@@ -143,7 +188,8 @@ class Interactive {
   }
 
   void _render() {
-    var filtersWrapper = html.DivElement()..classes = ["row", "filter-wrapper"];
+    var filtersWrapper = html.DivElement()
+      ..classes = [BS_ROW_CSS, FILTER_WRAPPER_CSS];
     filtersWrapper.append(_renderMetricDropdown());
     filtersWrapper.append(_renderFilterDropdown());
     if (_selected.filter != null) {
@@ -152,6 +198,7 @@ class Interactive {
 
     _container.children.clear();
     _container.append(filtersWrapper);
+    _container.append(_renderChart());
     _container.append(_renderLegend());
   }
 }

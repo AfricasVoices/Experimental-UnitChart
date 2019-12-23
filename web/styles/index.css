@@ -104,6 +104,24 @@ nav img {
   margin-bottom: 18px;
 }
 
+.chart-wrapper {
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  margin-bottom: 32px;
+  padding: 18px;
+}
+
+.x-axis {
+  stroke-width: 1px;
+  stroke: black;
+}
+
+.x-axis--label {
+  text-anchor: middle;
+  fill: black;
+}
+
 .legend-item {
   padding-left: 6px;
   border-left: 6px solid;

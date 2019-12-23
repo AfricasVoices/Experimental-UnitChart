@@ -21,6 +21,7 @@ const LEGEND_ITEM_CSS = "legend-item";
 class Interactive {
   List<model.Filter> _filters;
   List<model.Theme> _themes;
+  List<model.Person> _people;
   model.Selected _selected = model.Selected();
 
   html.DivElement _container;
@@ -62,8 +63,7 @@ class Interactive {
   }
 
   void _loadPeople() async {
-    var people = await fb.readPeople(_selected.filter, _selected.option);
-    print("Loaded ${people.length} people");
+    _people = await fb.readPeople(_selected.filter, _selected.option);
   }
 
   html.DivElement _renderMetricDropdown() {
@@ -155,6 +155,8 @@ class Interactive {
       ..setAttribute("y2", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT}");
     svgContainer.append(xAxisLine);
 
+    var groupPeople = Map<String, List<model.Person>>();
+
     var xAxisCategories = _filters
         .firstWhere((filter) => filter.value == _selected.metric)
         .options;
@@ -166,7 +168,26 @@ class Interactive {
             "x", "${(i + 0.5) * (chartWidth / xAxisCategories.length)}")
         ..setAttribute("y", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT / 4}");
       svgContainer.append(text);
+
+      groupPeople[xAxisCategories[i].value] = List();
     }
+
+    _people.forEach((people) {
+      var key;
+      switch (_selected.metric) {
+        case "age_category":
+          key = people.age_category;
+          break;
+        case "gender":
+          key = people.gender;
+          break;
+        case "idp_status":
+          key = people.idp_status;
+          break;
+        default:
+      }
+      groupPeople[key].add(people);
+    });
 
     return chartWrapper..append(svgContainer);
   }

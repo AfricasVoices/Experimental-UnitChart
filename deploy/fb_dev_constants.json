@@ -10,5 +10,6 @@
   "filtersDoc": "filters",
   "themesDoc": "themes",
   "dataDoc": "data",
-  "peopleCollection": "people"
+  "peopleCollection": "people",
+  "messagesCollection": "messages"
 }

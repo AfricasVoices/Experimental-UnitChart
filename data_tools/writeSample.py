@@ -28,6 +28,15 @@ def people(fbConfig):
     print(len(people), "people updated successfully")
 
 
+def messages(fbConfig):
+    messages = generateSample.messages(10)
+    messagesCollection = fb.db.collection(fbConfig["chartCollection"]).document(
+        fbConfig["dataDoc"]).collection(fbConfig["messagesCollection"])
+    for i in range(0, len(messages)):
+        messagesCollection.document(str(i)).set({"messages": messages[i]})
+    print(len(messages), "messages updated successfully")
+
+
 # usage python3 writeSample.py </path/to/fb_service_account.json> </path/to/fb_const.json> <themes|filters>
 parser = argparse.ArgumentParser()
 parser.add_argument("secret",
@@ -46,8 +55,8 @@ if args.fbconst is None:
     print("ERROR: Path to Firebase constants not found.")
     sys.exit()
 
-if args.option not in ["themes", "filters", "people"]:
-    print("ERROR: Unknown option. <themes|filters|people>")
+if args.option not in ["themes", "filters", "people", "messages"]:
+    print("ERROR: Unknown option. <themes|filters|people|messages>")
     sys.exit()
 
 fb.init(args.secret)
@@ -62,3 +71,5 @@ elif args.option == "filters":
     filters(fbConfig)
 elif args.option == "people":
     people(fbConfig)
+elif args.option == "messages":
+    messages(fbConfig)

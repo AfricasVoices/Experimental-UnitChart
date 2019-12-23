@@ -25,11 +25,13 @@ class Interactive {
     _filters = await fb.readFilters();
     _themes = await fb.readThemes();
     _selected.updateMetric(_filters.first.value);
+    await _loadPeople();
     _render();
   }
 
-  void _updateMetric(String value) {
+  void _updateMetric(String value) async {
     _selected.updateMetric(value);
+    await _loadPeople();
     _render();
   }
 
@@ -39,10 +41,16 @@ class Interactive {
     _render();
   }
 
-  void _updateFilterOption(String value) {
+  void _updateFilterOption(String value) async {
     value = value == "null" ? null : value;
     _selected.updateOption(value);
+    await _loadPeople();
     _render();
+  }
+
+  void _loadPeople() async {
+    var people = await fb.readPeople(_selected.filter, _selected.option);
+    print("Loaded ${people.length} people");
   }
 
   html.DivElement _renderMetricDropdown() {
@@ -72,6 +80,7 @@ class Interactive {
           .listen((e) => _updateFilter((e.target as html.SelectElement).value));
     var emptyOption = html.OptionElement()
       ..innerText = "--"
+      ..value = null
       ..selected = _selected.filter == null;
     filterSelect.append(emptyOption);
     _filters.forEach((filter) {
@@ -98,6 +107,7 @@ class Interactive {
           (e) => _updateFilterOption((e.target as html.SelectElement).value));
     var emptyOption = html.OptionElement()
       ..innerText = "--"
+      ..value = null
       ..selected = _selected.option == null;
     filterOptionSelect.append(emptyOption);
 
@@ -133,8 +143,6 @@ class Interactive {
   }
 
   void _render() {
-    print("render ${_selected.metric} ${_selected.filter} ${_selected.option}");
-
     var filtersWrapper = html.DivElement()..classes = ["row", "filter-wrapper"];
     filtersWrapper.append(_renderMetricDropdown());
     filtersWrapper.append(_renderFilterDropdown());

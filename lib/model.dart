@@ -8,21 +8,21 @@ class Message {
 
 class Person {
   num age;
-  String age_category;
+  String ageCategory;
   String gender;
-  String IDPStatus;
+  String idpStatus;
   String location;
   List<String> themes;
   int messageCount;
 
-  Person(this.age, this.age_category, this.gender, this.IDPStatus,
-      this.location, this.themes, this.messageCount);
+  Person(this.age, this.ageCategory, this.gender, this.idpStatus, this.location,
+      this.themes, this.messageCount);
 
   factory Person.fromFirebaseMap(Map<String, dynamic> obj) {
     List<String> themes =
         (obj["themes"] as List).map((t) => t.toString()).toList();
     return Person(obj["age"], obj["age_category"], obj["gender"],
-        obj["IDPStatus"], obj["location"], themes, obj["messageCount"]);
+        obj["idp_status"], obj["location"], themes, obj["messageCount"]);
   }
 }
 

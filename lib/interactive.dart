@@ -21,6 +21,10 @@ const XAXIS_CSS = "x-axis";
 const XAXIS_LABEL_CSS = "x-axis--label";
 const LEGEND_ITEM_CSS = "legend-item";
 
+// to do: make this configurable based on number of people
+const SQ_IN_ROW = 6;
+const SQ_WIDTH = 12;
+
 class Interactive {
   List<model.Filter> _filters;
   List<model.Theme> _themes;
@@ -194,7 +198,51 @@ class Interactive {
       peopleByLabel[key].add(people);
     });
 
+    for (var i = 0; i < xAxisCategories.length; ++i) {
+      var colSVG = svg.SvgElement.tag("g");
+
+      var colData = peopleByLabel[xAxisCategories[i].value];
+      num colOffset = (i + 0.5) * (chartWidth / xAxisCategories.length);
+
+      for (var j = 0; j < colData.length; ++j) {
+        num x = (j % SQ_IN_ROW - SQ_IN_ROW / 2) * SQ_WIDTH + colOffset;
+        num y = (CHART_HEIGHT - CHART_XAXIS_HEIGHT - 1.5 * SQ_WIDTH) -
+            (j / SQ_IN_ROW).truncate() * SQ_WIDTH;
+        num xOrigin = x - 1.5 * SQ_WIDTH;
+        num yOrigin = y - 1.5 * SQ_WIDTH;
+
+        var sqGroup = svg.SvgElement.tag("g")
+          ..setAttribute("transform-origin", "$xOrigin $yOrigin")
+          ..onMouseEnter
+              .listen((e) => this.handleMouseEnter(e.currentTarget, SQ_WIDTH))
+          ..onMouseOut.listen((e) => this.handleMouseOut(e.currentTarget));
+
+        var square = svg.RectElement()
+          ..setAttribute("x", x.toString())
+          ..setAttribute("y", y.toString())
+          ..setAttribute("width", SQ_WIDTH.toString())
+          ..setAttribute("height", SQ_WIDTH.toString())
+          ..setAttribute("fill", "black")
+          ..setAttribute("stroke", "white")
+          ..setAttribute("stroke-width", "2");
+        sqGroup.append(square);
+
+        colSVG.append(sqGroup);
+      }
+
+      svgContainer.append(colSVG);
+    }
+
     return chartWrapper..append(svgContainer);
+  }
+
+  void handleMouseEnter(svg.SvgElement rect, int w) {
+    rect.parent.append(rect);
+    rect..setAttribute("transform", "translate(${-2 * w}, ${-2 * w}) scale(2)");
+  }
+
+  void handleMouseOut(svg.SvgElement rect) {
+    rect..setAttribute("transform", "translate(0, 0) scale(1)");
   }
 
   html.DivElement _renderLegend() {

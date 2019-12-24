@@ -155,7 +155,7 @@ class Interactive {
       ..setAttribute("y2", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT}");
     svgContainer.append(xAxisLine);
 
-    var groupPeople = Map<String, List<model.Person>>();
+    var peopleByLabel = Map<String, List<model.Person>>();
 
     var xAxisCategories = _filters
         .firstWhere((filter) => filter.value == _selected.metric)
@@ -169,7 +169,7 @@ class Interactive {
         ..setAttribute("y", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT / 4}");
       svgContainer.append(text);
 
-      groupPeople[xAxisCategories[i].value] = List();
+      peopleByLabel[xAxisCategories[i].value] = List();
     }
 
     _people.forEach((people) {
@@ -186,7 +186,7 @@ class Interactive {
           break;
         default:
       }
-      groupPeople[key].add(people);
+      peopleByLabel[key].add(people);
     });
 
     return chartWrapper..append(svgContainer);

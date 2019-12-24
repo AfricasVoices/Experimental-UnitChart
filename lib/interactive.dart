@@ -176,13 +176,13 @@ class Interactive {
       var key;
       switch (_selected.metric) {
         case "age_category":
-          key = people.age_category;
+          key = people.ageCategory;
           break;
         case "gender":
           key = people.gender;
           break;
         case "idp_status":
-          key = people.idp_status;
+          key = people.idpStatus;
           break;
         default:
       }

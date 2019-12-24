@@ -8,15 +8,15 @@ class Message {
 
 class Person {
   num age;
-  String age_category;
+  String ageCategory;
   String gender;
-  String idp_status;
+  String idpStatus;
   String location;
   List<String> themes;
   int messageCount;
 
-  Person(this.age, this.age_category, this.gender, this.idp_status,
-      this.location, this.themes, this.messageCount);
+  Person(this.age, this.ageCategory, this.gender, this.idpStatus, this.location,
+      this.themes, this.messageCount);
 
   factory Person.fromFirebaseMap(Map<String, dynamic> obj) {
     List<String> themes =

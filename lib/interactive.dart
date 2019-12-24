@@ -1,7 +1,10 @@
 import 'dart:html' as html;
 import 'dart:svg' as svg;
+import 'package:avf/logger.dart';
 import 'package:avf/model.dart' as model;
 import 'package:avf/firebase.dart' as fb;
+
+Logger logger = Logger("interactive.dart");
 
 const BS_ROW_CSS = "row";
 const filterColumnCSS = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
@@ -21,6 +24,7 @@ const LEGEND_ITEM_CSS = "legend-item";
 class Interactive {
   List<model.Filter> _filters;
   List<model.Theme> _themes;
+  List<model.Person> _people;
   model.Selected _selected = model.Selected();
 
   html.DivElement _container;
@@ -62,8 +66,8 @@ class Interactive {
   }
 
   void _loadPeople() async {
-    var people = await fb.readPeople(_selected.filter, _selected.option);
-    print("Loaded ${people.length} people");
+    _people = await fb.readPeople(_selected.filter, _selected.option);
+    logger.log("${_people.length} people loaded");
   }
 
   html.DivElement _renderMetricDropdown() {
@@ -155,6 +159,8 @@ class Interactive {
       ..setAttribute("y2", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT}");
     svgContainer.append(xAxisLine);
 
+    var peopleByLabel = Map<String, List<model.Person>>();
+
     var xAxisCategories = _filters
         .firstWhere((filter) => filter.value == _selected.metric)
         .options;
@@ -166,7 +172,27 @@ class Interactive {
             "x", "${(i + 0.5) * (chartWidth / xAxisCategories.length)}")
         ..setAttribute("y", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT / 4}");
       svgContainer.append(text);
+
+      peopleByLabel[xAxisCategories[i].value] = List();
     }
+
+    _people.forEach((people) {
+      var key;
+      switch (_selected.metric) {
+        case "age_category":
+          key = people.ageCategory;
+          break;
+        case "gender":
+          key = people.gender;
+          break;
+        case "idp_status":
+          key = people.idpStatus;
+          break;
+        default:
+          logger.error("Selected metric ${_selected.metric} not found");
+      }
+      peopleByLabel[key].add(people);
+    });
 
     return chartWrapper..append(svgContainer);
   }

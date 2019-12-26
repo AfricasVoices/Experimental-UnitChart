@@ -6,6 +6,7 @@ import 'package:avf/model.dart' as model;
 firestore.DocumentReference _filtersRef;
 firestore.DocumentReference _themesRef;
 firestore.CollectionReference _peopleRef;
+firestore.CollectionReference _messagesRef;
 
 init() async {
   await fb_constants.init();
@@ -30,6 +31,10 @@ init() async {
       .collection(fb_constants.chartCollection)
       .doc(fb_constants.dataDoc)
       .collection(fb_constants.peopleCollection);
+  _messagesRef = _store
+      .collection(fb_constants.chartCollection)
+      .doc(fb_constants.dataDoc)
+      .collection(fb_constants.messagesCollection);
 }
 
 Future<List<model.Filter>> readFilters() async {
@@ -66,4 +71,11 @@ Future<List<model.Person>> readPeople(String filter, String option) async {
   });
 
   return peopleList.map((v) => model.Person.fromFirebaseMap(v)).toList();
+}
+
+Future<List<model.Message>> readMessages(String id) async {
+  var snapshot = await _messagesRef.doc(id).get();
+  return (snapshot.data()[fb_constants.messagesCollection] as List)
+      .map((message) => model.Message.fromFirebaseMap(message))
+      .toList();
 }

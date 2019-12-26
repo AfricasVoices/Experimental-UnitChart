@@ -26,3 +26,4 @@ String get filtersDoc => _constants['filtersDoc'];
 String get themesDoc => _constants['themesDoc'];
 String get dataDoc => _constants['dataDoc'];
 String get peopleCollection => _constants['peopleCollection'];
+String get messagesCollection => _constants['messagesCollection'];

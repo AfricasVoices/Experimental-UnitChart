@@ -7,19 +7,29 @@ import 'package:avf/firebase.dart' as fb;
 Logger logger = Logger("interactive.dart");
 
 const BS_ROW_CSS = "row";
+const BS_CONTAINER_CSS = "container";
 const filterColumnCSS = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
+const chartColumnCSS = ["col-lg-9", "col-md-9", "col-sm-12", "col-12"];
+const messagesColumnCSS = ["col-lg-3", "col-md-3", "col-sm-12", "col-12"];
 const themeColumnCSS = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
 
+const DEFAULT_CHART_WIDTH = 300;
 const CHART_PADDING = 18;
 const CHART_HEIGHT = 480;
 const CHART_XAXIS_HEIGHT = 25;
 
+const HTML_BODY_SELECTOR = "body";
 const FILTER_WRAPPER_CSS = "filter-wrapper";
 const FILTER_OPTION_CSS = "filter-option";
 const CHART_WRAPPER_CSS = "chart-wrapper";
+const MESSAGES_WRAPPER_CSS = "messages-wrapper";
+const PLACEHOLDER_CSS = "placeholder";
 const XAXIS_CSS = "x-axis";
 const XAXIS_LABEL_CSS = "x-axis--label";
 const LEGEND_ITEM_CSS = "legend-item";
+
+const MESSAGES_PLACEHOLDER_CSS =
+    "Click on square to view messages between the person and Africa's voices's volunteers.";
 
 // to do: make this configurable based on number of people
 const SQ_IN_ROW = 6;
@@ -28,18 +38,37 @@ const SQ_SIZE = 12;
 class Interactive {
   List<model.Filter> _filters;
   List<model.Theme> _themes;
+  List<model.Message> _messages;
   List<model.Person> _people;
+  num _chartWidth;
   model.Selected _selected = model.Selected();
 
   html.DivElement _container;
 
   Interactive(this._container) {
+    _chartWidth = _gatherChartWidth();
     init();
   }
 
   init() async {
     await fb.init();
     _loadFilters();
+  }
+
+  num _gatherChartWidth() {
+    var width = DEFAULT_CHART_WIDTH;
+    var container = html.DivElement()..classes = [BS_CONTAINER_CSS];
+    var row = html.DivElement()..classes = [BS_ROW_CSS];
+    var col = html.DivElement()..classes = chartColumnCSS;
+    var body = html.querySelector(HTML_BODY_SELECTOR);
+
+    container.append(row);
+    row.append(col);
+    body.append(container);
+    width = col.clientWidth;
+    container.remove();
+
+    return width;
   }
 
   void _loadFilters() async {
@@ -149,7 +178,7 @@ class Interactive {
 
   html.DivElement _renderChart() {
     var chartWrapper = html.DivElement()..classes = [CHART_WRAPPER_CSS];
-    var chartWidth = _container.offset.width - 2 * CHART_PADDING;
+    var chartWidth = _chartWidth - 4 * CHART_PADDING;
 
     var svgContainer = svg.SvgSvgElement()
       ..style.width = "${chartWidth}px"
@@ -257,12 +286,10 @@ class Interactive {
   void handleMouseEnter(svg.SvgElement rect, int w) {
     rect.parent.append(rect);
     rect..setAttribute("transform", "translate(${-2 * w}, ${-2 * w}) scale(2)");
-    (rect.firstChild as svg.RectElement)..setAttribute("stroke", "black");
   }
 
   void handleMouseOut(svg.SvgElement rect) {
     rect..setAttribute("transform", "translate(0, 0) scale(1)");
-    (rect.firstChild as svg.RectElement)..setAttribute("stroke", "white");
   }
 
   String _getThemeColor(String theme) {
@@ -289,6 +316,17 @@ class Interactive {
     return legendWrapper;
   }
 
+  html.DivElement _renderMessages() {
+    var messagesWrapper = html.DivElement()..classes = [MESSAGES_WRAPPER_CSS];
+    if (_messages == null) {
+      var placeholderText = html.ParagraphElement()
+        ..classes = [PLACEHOLDER_CSS]
+        ..appendText(MESSAGES_PLACEHOLDER_CSS);
+      messagesWrapper.append(placeholderText);
+    }
+    return messagesWrapper;
+  }
+
   void _render() {
     var filtersWrapper = html.DivElement()
       ..classes = [BS_ROW_CSS, FILTER_WRAPPER_CSS];
@@ -298,9 +336,17 @@ class Interactive {
       filtersWrapper.append(_renderFilterOptionDropdown());
     }
 
+    var chartMessageRow = html.DivElement()..classes = [BS_ROW_CSS];
+    var chartColumn = html.DivElement()..classes = chartColumnCSS;
+    var messageColumn = html.DivElement()..classes = messagesColumnCSS;
+    chartMessageRow.append(chartColumn);
+    chartColumn.append(_renderChart());
+    chartMessageRow.append(messageColumn);
+    messageColumn.append(_renderMessages());
+
     _container.children.clear();
     _container.append(filtersWrapper);
-    _container.append(_renderChart());
+    _container.append(chartMessageRow);
     _container.append(_renderLegend());
   }
 }

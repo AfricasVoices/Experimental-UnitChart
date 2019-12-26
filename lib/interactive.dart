@@ -201,7 +201,13 @@ class Interactive {
     for (var i = 0; i < xAxisCategories.length; ++i) {
       var colSVG = svg.SvgElement.tag("g");
 
-      var colData = peopleByLabel[xAxisCategories[i].value];
+      // cloning list of people to sort
+      var colData = peopleByLabel[xAxisCategories[i].value]
+          .map((t) => model.Person(t.age, t.ageCategory, t.gender, t.idpStatus,
+              t.location, t.themes, t.messageCount))
+          .toList();
+      colData.sort((p1, p2) => p1.themes.first.compareTo(p2.themes.first));
+
       num colOffset = (i + 0.5) * (chartWidth / xAxisCategories.length);
 
       for (var j = 0; j < colData.length; ++j) {
@@ -222,7 +228,7 @@ class Interactive {
           ..setAttribute("y", y.toString())
           ..setAttribute("width", SQ_SIZE.toString())
           ..setAttribute("height", SQ_SIZE.toString())
-          ..setAttribute("fill", "black")
+          ..setAttribute("fill", _getThemeColor(colData[j].themes.first))
           ..setAttribute("stroke", "white")
           ..setAttribute("stroke-width", "2");
         sqGroup.append(square);
@@ -243,6 +249,14 @@ class Interactive {
 
   void handleMouseOut(svg.SvgElement rect) {
     rect..setAttribute("transform", "translate(0, 0) scale(1)");
+  }
+
+  String _getThemeColor(String theme) {
+    String color = "black";
+    _themes.forEach((t) {
+      if (t.value == theme) color = t.color;
+    });
+    return color;
   }
 
   html.DivElement _renderLegend() {

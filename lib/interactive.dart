@@ -206,7 +206,8 @@ class Interactive {
           .map((t) => model.Person(t.age, t.ageCategory, t.gender, t.idpStatus,
               t.location, t.themes, t.messageCount))
           .toList();
-      colData.sort((p1, p2) => p1.themes.first.compareTo(p2.themes.first));
+      colData.sort(
+          (p1, p2) => p1.themes.toString().compareTo(p2.themes.toString()));
 
       num colOffset = (i + 0.5) * (chartWidth / xAxisCategories.length);
 
@@ -223,15 +224,26 @@ class Interactive {
               .listen((e) => this.handleMouseEnter(e.currentTarget, SQ_SIZE))
           ..onMouseOut.listen((e) => this.handleMouseOut(e.currentTarget));
 
+        var themes = colData[j].themes;
         var square = svg.RectElement()
           ..setAttribute("x", x.toString())
           ..setAttribute("y", y.toString())
           ..setAttribute("width", SQ_SIZE.toString())
           ..setAttribute("height", SQ_SIZE.toString())
-          ..setAttribute("fill", _getThemeColor(colData[j].themes.first))
+          ..setAttribute("fill", _getThemeColor(themes.first))
           ..setAttribute("stroke", "white")
           ..setAttribute("stroke-width", "2");
         sqGroup.append(square);
+
+        if (themes.length > 1) {
+          var circle = svg.CircleElement()
+            ..setAttribute("cx", (x + SQ_SIZE / 2).toString())
+            ..setAttribute("cy", (y + SQ_SIZE / 2).toString())
+            ..setAttribute("r", (SQ_SIZE / 6).toString())
+            ..setAttribute("fill", _getThemeColor(themes[1]))
+            ..setAttribute("pointer-events", "none");
+          sqGroup.append(circle);
+        }
 
         colSVG.append(sqGroup);
       }
@@ -245,10 +257,12 @@ class Interactive {
   void handleMouseEnter(svg.SvgElement rect, int w) {
     rect.parent.append(rect);
     rect..setAttribute("transform", "translate(${-2 * w}, ${-2 * w}) scale(2)");
+    (rect.firstChild as svg.RectElement)..setAttribute("stroke", "black");
   }
 
   void handleMouseOut(svg.SvgElement rect) {
     rect..setAttribute("transform", "translate(0, 0) scale(1)");
+    (rect.firstChild as svg.RectElement)..setAttribute("stroke", "white");
   }
 
   String _getThemeColor(String theme) {

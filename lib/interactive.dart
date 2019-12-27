@@ -80,7 +80,8 @@ class Interactive {
     _selected.updateMetric(_filters.first.value);
     await _loadPeople();
 
-    _filtersWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
+    _filtersWrapper = html.DivElement()
+      ..classes = [ROW_CSS_CLASS, FILTER_WRAPPER_CSS_CLASS];
     _dataWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
     _chartsColumn = html.DivElement()..classes = CHART_COLUMN_CSS_CLASSES;
     _messagesColumn = html.DivElement()..classes = MESSAGES_COLUMN_CSS_CLASSES;

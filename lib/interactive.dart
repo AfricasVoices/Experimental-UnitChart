@@ -198,7 +198,7 @@ class Interactive {
 
   html.DivElement _renderChart() {
     var chartWrapper = html.DivElement()..classes = [CHART_WRAPPER_CSS_CLASS];
-    var chartWidth = _chartWidth - 4 * CHART_PADDING;
+    var chartWidth = _chartWidth - (4 * CHART_PADDING);
 
     var svgContainer = svg.SvgSvgElement()
       ..style.width = "${chartWidth}px"
@@ -261,11 +261,11 @@ class Interactive {
       num colOffset = (i + 0.5) * (chartWidth / xAxisCategories.length);
 
       for (var j = 0; j < colData.length; ++j) {
-        num x = (j % SQ_IN_ROW - SQ_IN_ROW / 2) * SQ_SIZE + colOffset;
-        num y = (CHART_HEIGHT - CHART_XAXIS_HEIGHT - 1.5 * SQ_SIZE) -
+        num x = (j % SQ_IN_ROW - (SQ_IN_ROW / 2)) * SQ_SIZE + colOffset;
+        num y = (CHART_HEIGHT - CHART_XAXIS_HEIGHT - (1.5 * SQ_SIZE)) -
             (j / SQ_IN_ROW).truncate() * SQ_SIZE;
-        num xOrigin = x - 1.5 * SQ_SIZE;
-        num yOrigin = y - 1.5 * SQ_SIZE;
+        num xOrigin = x - (1.5 * SQ_SIZE);
+        num yOrigin = y - (1.5 * SQ_SIZE);
 
         var sqGroup = svg.SvgElement.tag("g")
           ..setAttribute("transform-origin", "$xOrigin $yOrigin")
@@ -287,8 +287,8 @@ class Interactive {
 
         if (themes.length > 1) {
           var circle = svg.CircleElement()
-            ..setAttribute("cx", (x + SQ_SIZE / 2).toString())
-            ..setAttribute("cy", (y + SQ_SIZE / 2).toString())
+            ..setAttribute("cx", (x + (SQ_SIZE / 2)).toString())
+            ..setAttribute("cy", (y + (SQ_SIZE / 2)).toString())
             ..setAttribute("r", (SQ_SIZE / 6).toString())
             ..setAttribute("fill", _getThemeColor(themes[1]))
             ..setAttribute("pointer-events", "none");

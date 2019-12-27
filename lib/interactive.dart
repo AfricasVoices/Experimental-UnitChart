@@ -10,6 +10,7 @@ const DEFAULT_CHART_WIDTH = 300;
 const CHART_HEIGHT = 480;
 const CHART_PADDING = 18;
 const CHART_XAXIS_HEIGHT = 25;
+const TOOLTIP_OFFSET = 25;
 const SQ_IN_ROW = 6;
 const SQ_WIDTH = 12;
 
@@ -32,6 +33,7 @@ const CHART_COLUMN_CSS_CLASSES = [
 const CHART_WRAPPER_CSS_CLASS = "chart-wrapper";
 const XAXIS_CSS_CLASS = "x-axis";
 const XAXIS_LABEL_CSS_CLASS = "x-axis--label";
+const CHART_TOOLTIP_CSS_CLASS = "tool-tip";
 
 // Messages CSS classses
 const MESSAGES_COLUMN_CSS_CLASSES = [
@@ -61,6 +63,7 @@ class Interactive {
   model.Selected _selected;
 
   html.DivElement _container;
+  html.SpanElement _tooltip;
   html.DivElement _filtersWrapper;
   html.DivElement _dataWrapper;
   html.DivElement _chartsColumn;
@@ -85,10 +88,14 @@ class Interactive {
     _dataWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
     _chartsColumn = html.DivElement()..classes = CHART_COLUMN_CSS_CLASSES;
     _messagesColumn = html.DivElement()..classes = MESSAGES_COLUMN_CSS_CLASSES;
+    _tooltip = html.SpanElement()
+      ..classes = [CHART_TOOLTIP_CSS_CLASS]
+      ..setAttribute("hidden", "true");
     _legendWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
 
     _dataWrapper.append(_chartsColumn);
     _dataWrapper.append(_messagesColumn);
+    _dataWrapper.append(_tooltip);
 
     _container.nodes.clear();
     _container.append(_filtersWrapper);
@@ -126,6 +133,35 @@ class Interactive {
     return color;
   }
 
+  String _lookupFilterLabels(String filter, String option) {
+    String label = "Unknown";
+    for (var f in _filters) {
+      if (f.value == filter) {
+        for (var o in f.options) {
+          if (o.value == option) {
+            label = o.label;
+            continue;
+          }
+        }
+        continue;
+      }
+    }
+    return label;
+  }
+
+  String _lookupThemeLabels(List<String> themes) {
+    List<String> labels = List();
+    for (var theme in themes) {
+      for (var t in _themes) {
+        if (t.value == theme) {
+          labels.add(t.label);
+          continue;
+        }
+      }
+    }
+    return labels.join(", ");
+  }
+
   // Data fetch
   void _loadFilters() async {
     _filters = await fb.readFilters();
@@ -150,6 +186,7 @@ class Interactive {
   // User events
   void _updateMetric(String value) async {
     _selected.updateMetric(value);
+    _selected.updatePerson(null);
     await _loadPeople();
     _renderFilters();
     _renderChart();
@@ -166,6 +203,7 @@ class Interactive {
   void _updateFilterOption(String value) async {
     value = value == "null" ? null : value;
     _selected.updateOption(value);
+    _selected.updatePerson(null);
     await _loadPeople();
     _renderFilters();
     _renderChart();
@@ -173,15 +211,67 @@ class Interactive {
     _renderMessages();
   }
 
-  void handleMouseEnter(svg.SvgElement rect, int sqWidth) {
-    rect.parent.append(rect);
-    rect
-      ..setAttribute(
-          "transform", "translate(${-2 * sqWidth}, ${-2 * sqWidth}) scale(2)");
+  String _getTooltipContent(model.Person person) {
+    return """
+      <table>
+        <tr>
+          <td>Gender</td>
+          <td>${_lookupFilterLabels('gender', person.gender)}</td>
+        </tr>
+        <tr>
+          <td>Age</td>
+          <td>${person.age} years</td>
+        </tr>
+        <tr>
+          <td>IDP Status</td>
+          <td>${_lookupFilterLabels('idp_status', person.idpStatus)}</td>
+        </tr>
+        <tr>
+          <td>Location</td>
+          <td>${person.location}</td>
+        </tr>
+        <tr>
+          <td>Talked about</td>
+          <td>${_lookupThemeLabels(person.themes)}</td>
+        </tr>
+      </table>
+    """;
   }
 
-  void handleMouseOut(svg.SvgElement rect) {
+  void _handleMouseEnter(
+      svg.SvgElement rect, num x, num y, model.Person person) {
+    var dist = -2 * SQ_WIDTH;
+    rect.parent.append(rect);
+    rect..setAttribute("transform", "translate($dist, $dist) scale(2)");
+
+    _tooltip
+      ..nodes.clear()
+      ..setInnerHtml(_getTooltipContent(person))
+      ..style.setProperty("left", "${x + TOOLTIP_OFFSET}px")
+      ..style.setProperty("top", "${y - 4 * TOOLTIP_OFFSET}px")
+      ..removeAttribute("hidden");
+  }
+
+  void _handleMouseOut(svg.SvgElement rect) {
     rect..setAttribute("transform", "translate(0, 0) scale(1)");
+    _tooltip..setAttribute("hidden", "true");
+  }
+
+  void _handleClick(html.MouseEvent evt, String personID) async {
+    evt.stopPropagation();
+    _selected.updatePerson(personID);
+    _renderChart();
+    await _loadMessages(personID);
+    _renderMessages();
+  }
+
+  void _clearSelectedPerson() {
+    if (_selected.personID == null) return;
+
+    _selected.updatePerson(null);
+    _renderChart();
+    _messages = null;
+    _renderMessages();
   }
 
   // Render
@@ -268,11 +358,6 @@ class Interactive {
     }
   }
 
-  void _loadRenderMessages(String personID) async {
-    await _loadMessages(personID);
-    _renderMessages();
-  }
-
   void _renderChart() {
     _chartsColumn.nodes.clear();
 
@@ -281,7 +366,8 @@ class Interactive {
 
     var svgContainer = svg.SvgSvgElement()
       ..style.width = "${chartWidth}px"
-      ..style.height = "${CHART_HEIGHT}px";
+      ..style.height = "${CHART_HEIGHT}px"
+      ..onClick.listen((e) => _clearSelectedPerson());
 
     var xAxisLine = svg.LineElement()
       ..classes = [XAXIS_CSS_CLASS]
@@ -348,10 +434,10 @@ class Interactive {
 
         var sqGroup = svg.SvgElement.tag("g")
           ..setAttribute("transform-origin", "$xOrigin $yOrigin")
-          ..onClick.listen((e) => _loadRenderMessages(colData[j].id))
-          ..onMouseEnter
-              .listen((e) => this.handleMouseEnter(e.currentTarget, SQ_WIDTH))
-          ..onMouseOut.listen((e) => this.handleMouseOut(e.currentTarget));
+          ..onClick.listen((e) => this._handleClick(e, colData[j].id))
+          ..onMouseEnter.listen((e) => this._handleMouseEnter(
+              e.currentTarget, e.client.x, e.client.y, colData[j]))
+          ..onMouseOut.listen((e) => this._handleMouseOut(e.currentTarget));
 
         var themes = colData[j].themes;
         String primaryTheme = themes.first;
@@ -361,7 +447,8 @@ class Interactive {
           ..setAttribute("width", SQ_WIDTH.toString())
           ..setAttribute("height", SQ_WIDTH.toString())
           ..setAttribute("fill", _getThemeColor(primaryTheme))
-          ..setAttribute("stroke", "white")
+          ..setAttribute(
+              "stroke", colData[j].id == _selected.personID ? "black" : "white")
           ..setAttribute("stroke-width", "2");
         sqGroup.append(square);
 

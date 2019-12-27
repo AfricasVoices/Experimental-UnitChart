@@ -86,10 +86,12 @@ class Selected {
   String _metric;
   String _filter;
   String _option;
+  String _personID;
 
   String get metric => _metric;
   String get filter => _filter;
   String get option => _option;
+  String get personID => _personID;
 
   void updateMetric(metric) {
     if (_metric == metric) return;
@@ -107,5 +109,9 @@ class Selected {
   void updateOption(option) {
     if (_option == option) return;
     _option = option;
+  }
+
+  void updatePerson(personID) {
+    _personID = personID;
   }
 }

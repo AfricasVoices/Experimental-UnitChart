@@ -251,7 +251,7 @@ class Interactive {
       var colSVG = svg.SvgElement.tag("g");
 
       // cloning list of people to sort
-      var colData = peopleByLabel[xAxisCategories[i].value]
+      List<model.Person> colData = peopleByLabel[xAxisCategories[i].value]
           .map((t) => model.Person(t.id, t.age, t.ageCategory, t.gender,
               t.idpStatus, t.location, t.themes, t.messageCount))
           .toList();

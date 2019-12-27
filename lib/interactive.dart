@@ -33,6 +33,9 @@ const FILTER_WRAPPER_CSS_CLASS = "filter-wrapper";
 const FILTER_OPTION_CSS_CLASS = "filter-option";
 const CHART_WRAPPER_CSS_CLASS = "chart-wrapper";
 const MESSAGES_WRAPPER_CSS_CLASS = "messages-wrapper";
+const MESSAGE_CSS_CLASS = "message";
+const MESSAGES_RESPONSE_CSS_CLASS = "message-response";
+const MESSAGES_QUESTION_CSS_CLASS = "message-question";
 const PLACEHOLDER_CSS_CLASS = "placeholder";
 const XAXIS_CSS_CLASS = "x-axis";
 const XAXIS_LABEL_CSS_CLASS = "x-axis--label";
@@ -111,6 +114,12 @@ class Interactive {
   void _loadPeople() async {
     _people = await fb.readPeople(_selected.filter, _selected.option);
     logger.log("${_people.length} people loaded");
+  }
+
+  void _loadMessages(String id) async {
+    _messages = await fb.readMessages(id);
+    logger.log("${_messages.length} messages loaded");
+    _renderMessages();
   }
 
   html.DivElement _renderMetricDropdown() {
@@ -243,8 +252,8 @@ class Interactive {
 
       // cloning list of people to sort
       var colData = peopleByLabel[xAxisCategories[i].value]
-          .map((t) => model.Person(t.age, t.ageCategory, t.gender, t.idpStatus,
-              t.location, t.themes, t.messageCount))
+          .map((t) => model.Person(t.id, t.age, t.ageCategory, t.gender,
+              t.idpStatus, t.location, t.themes, t.messageCount))
           .toList();
       colData.sort(
           (p1, p2) => p1.themes.toString().compareTo(p2.themes.toString()));
@@ -260,6 +269,7 @@ class Interactive {
 
         var sqGroup = svg.SvgElement.tag("g")
           ..setAttribute("transform-origin", "$xOrigin $yOrigin")
+          ..onClick.listen((e) => this._loadMessages(colData[j].id))
           ..onMouseEnter
               .listen((e) => this.handleMouseEnter(e.currentTarget, SQ_SIZE))
           ..onMouseOut.listen((e) => this.handleMouseOut(e.currentTarget));
@@ -331,12 +341,36 @@ class Interactive {
     var messagesWrapper = html.DivElement()
       ..classes = [MESSAGES_WRAPPER_CSS_CLASS];
     if (_messages == null) {
+      var messagesWrapper = html.DivElement()
+        ..classes = [MESSAGES_WRAPPER_CSS_CLASS];
       var placeholderText = html.ParagraphElement()
         ..classes = [PLACEHOLDER_CSS_CLASS]
         ..appendText(MESSAGES_PLACEHOLDER_TEXT);
       messagesWrapper.append(placeholderText);
+      return messagesWrapper;
     }
-    return messagesWrapper;
+
+    var wrapper = html.querySelector("#$MESSAGES_WRAPPER_CSS_CLASS");
+    wrapper.classes.toggle(MESSAGES_WRAPPER_CSS_CLASS, true);
+    wrapper.style.height = (CHART_HEIGHT + 2 * CHART_PADDING).toString() + "px";
+    wrapper.children.clear();
+
+    for (var message in _messages) {
+      var text = message.text;
+      var msgClass = MESSAGES_RESPONSE_CSS_CLASS;
+      if (message.isResponse == false) {
+        text = "AVF: $text";
+        msgClass = MESSAGES_QUESTION_CSS_CLASS;
+      }
+      var messageDiv = html.DivElement()
+        ..appendText(text)
+        ..classes = [MESSAGE_CSS_CLASS, msgClass]
+        ..style.borderLeftColor = message.theme != null
+            ? "${_getThemeColor(message.theme)}"
+            : "white";
+      wrapper.append(messageDiv);
+    }
+    return wrapper;
   }
 
   void _render() {

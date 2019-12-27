@@ -61,6 +61,7 @@ nav {
   padding: 12px;
   position: fixed;
   width: 100%;
+  z-index: 100;
 }
 
 nav img {
@@ -123,6 +124,27 @@ nav img {
   height: calc(100% - 32px);
   overflow-y: scroll;
   margin-bottom: 32px;
+}
+
+.message {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 3px;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+}
+
+.message-question {
+  margin-left: 32px;
+  text-align: right;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.message-response {
+  margin-right: 32px;
+  background-color: white;
+  border-left-width: 6px;
+  border-left-style: solid;
 }
 
 .x-axis {

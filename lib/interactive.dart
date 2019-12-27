@@ -6,12 +6,22 @@ import 'package:avf/firebase.dart' as fb;
 
 Logger logger = Logger("interactive.dart");
 
-const BS_ROW_CSS = "row";
-const BS_CONTAINER_CSS = "container";
-const filterColumnCSS = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
-const chartColumnCSS = ["col-lg-9", "col-md-9", "col-sm-12", "col-12"];
-const messagesColumnCSS = ["col-lg-3", "col-md-3", "col-sm-12", "col-12"];
-const themeColumnCSS = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
+const ROW_CSS_CLASS = "row";
+const CONTAINER_CSS_CLASS = "container";
+const FILTER_COLUMN_CSS_CLASSES = ["col-lg-3", "col-md-4", "col-sm-4", "col-4"];
+const CHART_COLUMN_CSS_CLASSES = [
+  "col-lg-9",
+  "col-md-9",
+  "col-sm-12",
+  "col-12"
+];
+const MESSAGES_COLUMN_CSS_CLASSES = [
+  "col-lg-3",
+  "col-md-3",
+  "col-sm-12",
+  "col-12"
+];
+const THEME_COLUMN_CSS_CLASSES = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
 
 const DEFAULT_CHART_WIDTH = 300;
 const CHART_PADDING = 18;
@@ -19,16 +29,16 @@ const CHART_HEIGHT = 480;
 const CHART_XAXIS_HEIGHT = 25;
 
 const HTML_BODY_SELECTOR = "body";
-const FILTER_WRAPPER_CSS = "filter-wrapper";
-const FILTER_OPTION_CSS = "filter-option";
-const CHART_WRAPPER_CSS = "chart-wrapper";
-const MESSAGES_WRAPPER_CSS = "messages-wrapper";
-const PLACEHOLDER_CSS = "placeholder";
-const XAXIS_CSS = "x-axis";
-const XAXIS_LABEL_CSS = "x-axis--label";
-const LEGEND_ITEM_CSS = "legend-item";
+const FILTER_WRAPPER_CSS_CLASS = "filter-wrapper";
+const FILTER_OPTION_CSS_CLASS = "filter-option";
+const CHART_WRAPPER_CSS_CLASS = "chart-wrapper";
+const MESSAGES_WRAPPER_CSS_CLASS = "messages-wrapper";
+const PLACEHOLDER_CSS_CLASS = "placeholder";
+const XAXIS_CSS_CLASS = "x-axis";
+const XAXIS_LABEL_CSS_CLASS = "x-axis--label";
+const LEGEND_ITEM_CSS_CLASS = "legend-item";
 
-const MESSAGES_PLACEHOLDER_CSS =
+const MESSAGES_PLACEHOLDER_TEXT =
     "Click on square to view messages between the person and Africa's voices's volunteers.";
 
 // to do: make this configurable based on number of people
@@ -57,9 +67,9 @@ class Interactive {
 
   num _gatherChartWidth() {
     var width = DEFAULT_CHART_WIDTH;
-    var container = html.DivElement()..classes = [BS_CONTAINER_CSS];
-    var row = html.DivElement()..classes = [BS_ROW_CSS];
-    var col = html.DivElement()..classes = chartColumnCSS;
+    var container = html.DivElement()..classes = [CONTAINER_CSS_CLASS];
+    var row = html.DivElement()..classes = [ROW_CSS_CLASS];
+    var col = html.DivElement()..classes = CHART_COLUMN_CSS_CLASSES;
     var body = html.querySelector(HTML_BODY_SELECTOR);
 
     container.append(row);
@@ -104,7 +114,7 @@ class Interactive {
   }
 
   html.DivElement _renderMetricDropdown() {
-    var metricWrapper = html.DivElement()..classes = filterColumnCSS;
+    var metricWrapper = html.DivElement()..classes = FILTER_COLUMN_CSS_CLASSES;
     var metricLabel = html.LabelElement()..innerText = "View by";
     var metricSelect = html.SelectElement()
       ..onChange
@@ -123,7 +133,7 @@ class Interactive {
   }
 
   html.DivElement _renderFilterDropdown() {
-    var filterWrapper = html.DivElement()..classes = filterColumnCSS;
+    var filterWrapper = html.DivElement()..classes = FILTER_COLUMN_CSS_CLASSES;
     var filterLabel = html.LabelElement()..innerText = "Filter by";
     var filterSelect = html.SelectElement()
       ..onChange
@@ -149,10 +159,11 @@ class Interactive {
   }
 
   html.DivElement _renderFilterOptionDropdown() {
-    var filterOptionWrapper = html.DivElement()..classes = filterColumnCSS;
+    var filterOptionWrapper = html.DivElement()
+      ..classes = FILTER_COLUMN_CSS_CLASSES;
     var filterOptionLabel = html.LabelElement()..innerText = ".";
     var filterOptionSelect = html.SelectElement()
-      ..classes = [FILTER_OPTION_CSS]
+      ..classes = [FILTER_OPTION_CSS_CLASS]
       ..onChange.listen(
           (e) => _updateFilterOption((e.target as html.SelectElement).value));
     var emptyOption = html.OptionElement()
@@ -177,7 +188,7 @@ class Interactive {
   }
 
   html.DivElement _renderChart() {
-    var chartWrapper = html.DivElement()..classes = [CHART_WRAPPER_CSS];
+    var chartWrapper = html.DivElement()..classes = [CHART_WRAPPER_CSS_CLASS];
     var chartWidth = _chartWidth - 4 * CHART_PADDING;
 
     var svgContainer = svg.SvgSvgElement()
@@ -185,7 +196,7 @@ class Interactive {
       ..style.height = "${CHART_HEIGHT}px";
 
     var xAxisLine = svg.LineElement()
-      ..classes = [XAXIS_CSS]
+      ..classes = [XAXIS_CSS_CLASS]
       ..setAttribute("x1", "0")
       ..setAttribute("y1", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT}")
       ..setAttribute("x2", "${chartWidth}")
@@ -200,7 +211,7 @@ class Interactive {
     for (var i = 0; i < xAxisCategories.length; ++i) {
       var text = svg.TextElement()
         ..appendText(xAxisCategories[i].label)
-        ..classes = [XAXIS_LABEL_CSS]
+        ..classes = [XAXIS_LABEL_CSS_CLASS]
         ..setAttribute(
             "x", "${(i + 0.5) * (chartWidth / xAxisCategories.length)}")
         ..setAttribute("y", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT / 4}");
@@ -301,11 +312,11 @@ class Interactive {
   }
 
   html.DivElement _renderLegend() {
-    var legendWrapper = html.DivElement()..classes = [BS_ROW_CSS];
+    var legendWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
     _themes.forEach((theme) {
-      var legendColumn = html.DivElement()..classes = themeColumnCSS;
+      var legendColumn = html.DivElement()..classes = THEME_COLUMN_CSS_CLASSES;
       var legendColor = html.LabelElement()
-        ..classes = [LEGEND_ITEM_CSS]
+        ..classes = [LEGEND_ITEM_CSS_CLASS]
         ..innerText = theme.label
         ..style.borderLeftColor = theme.color;
       legendColumn.append(legendColor);
@@ -317,11 +328,12 @@ class Interactive {
   }
 
   html.DivElement _renderMessages() {
-    var messagesWrapper = html.DivElement()..classes = [MESSAGES_WRAPPER_CSS];
+    var messagesWrapper = html.DivElement()
+      ..classes = [MESSAGES_WRAPPER_CSS_CLASS];
     if (_messages == null) {
       var placeholderText = html.ParagraphElement()
-        ..classes = [PLACEHOLDER_CSS]
-        ..appendText(MESSAGES_PLACEHOLDER_CSS);
+        ..classes = [PLACEHOLDER_CSS_CLASS]
+        ..appendText(MESSAGES_PLACEHOLDER_TEXT);
       messagesWrapper.append(placeholderText);
     }
     return messagesWrapper;
@@ -329,16 +341,17 @@ class Interactive {
 
   void _render() {
     var filtersWrapper = html.DivElement()
-      ..classes = [BS_ROW_CSS, FILTER_WRAPPER_CSS];
+      ..classes = [ROW_CSS_CLASS, FILTER_WRAPPER_CSS_CLASS];
     filtersWrapper.append(_renderMetricDropdown());
     filtersWrapper.append(_renderFilterDropdown());
     if (_selected.filter != null) {
       filtersWrapper.append(_renderFilterOptionDropdown());
     }
 
-    var chartMessageRow = html.DivElement()..classes = [BS_ROW_CSS];
-    var chartColumn = html.DivElement()..classes = chartColumnCSS;
-    var messageColumn = html.DivElement()..classes = messagesColumnCSS;
+    var chartMessageRow = html.DivElement()..classes = [ROW_CSS_CLASS];
+    var chartColumn = html.DivElement()..classes = CHART_COLUMN_CSS_CLASSES;
+    var messageColumn = html.DivElement()
+      ..classes = MESSAGES_COLUMN_CSS_CLASSES;
     chartMessageRow.append(chartColumn);
     chartColumn.append(_renderChart());
     chartMessageRow.append(messageColumn);

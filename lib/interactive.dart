@@ -275,22 +275,24 @@ class Interactive {
           ..onMouseOut.listen((e) => this.handleMouseOut(e.currentTarget));
 
         var themes = colData[j].themes;
+        String primaryTheme = themes.first;
         var square = svg.RectElement()
           ..setAttribute("x", x.toString())
           ..setAttribute("y", y.toString())
           ..setAttribute("width", SQ_SIZE.toString())
           ..setAttribute("height", SQ_SIZE.toString())
-          ..setAttribute("fill", _getThemeColor(themes.first))
+          ..setAttribute("fill", _getThemeColor(primaryTheme))
           ..setAttribute("stroke", "white")
           ..setAttribute("stroke-width", "2");
         sqGroup.append(square);
 
         if (themes.length > 1) {
+          String secondaryTheme = themes[1];
           var circle = svg.CircleElement()
             ..setAttribute("cx", (x + (SQ_SIZE / 2)).toString())
             ..setAttribute("cy", (y + (SQ_SIZE / 2)).toString())
             ..setAttribute("r", (SQ_SIZE / 6).toString())
-            ..setAttribute("fill", _getThemeColor(themes[1]))
+            ..setAttribute("fill", _getThemeColor(secondaryTheme))
             ..setAttribute("pointer-events", "none");
           sqGroup.append(circle);
         }

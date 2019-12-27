@@ -59,7 +59,7 @@ class Interactive {
   html.DivElement _container;
 
   Interactive(this._container) {
-    _chartWidth = _gatherChartWidth();
+    _chartWidth = _computeChartWidth();
     init();
   }
 
@@ -68,7 +68,7 @@ class Interactive {
     _loadFilters();
   }
 
-  num _gatherChartWidth() {
+  num _computeChartWidth() {
     var width = DEFAULT_CHART_WIDTH;
     var container = html.DivElement()..classes = [CONTAINER_CSS_CLASS];
     var row = html.DivElement()..classes = [ROW_CSS_CLASS];
@@ -338,8 +338,6 @@ class Interactive {
   }
 
   html.DivElement _renderMessages() {
-    var messagesWrapper = html.DivElement()
-      ..classes = [MESSAGES_WRAPPER_CSS_CLASS];
     if (_messages == null) {
       var messagesWrapper = html.DivElement()
         ..classes = [MESSAGES_WRAPPER_CSS_CLASS];

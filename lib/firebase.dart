@@ -73,8 +73,9 @@ Future<List<model.Person>> readPeople(String filter, String option) async {
   return peopleList.map((v) => model.Person.fromFirebaseMap(v)).toList();
 }
 
-Future<List<model.Message>> readMessages(String id) async {
-  var snapshot = await _messagesRef.doc(id).get();
+Future<List<model.Message>> readMessages(String personID) async {
+  // personID is same ID for identifying messages
+  var snapshot = await _messagesRef.doc(personID).get();
   return (snapshot.data()[fb_constants.messagesCollection] as List)
       .map((message) => model.Message.fromFirebaseMap(message))
       .toList();

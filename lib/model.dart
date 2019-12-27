@@ -4,9 +4,17 @@ class Message {
   String theme;
   DateTime time;
   bool isResponse;
+
+  Message(this.id, this.text, this.theme, this.time, this.isResponse);
+
+  factory Message.fromFirebaseMap(Map<String, dynamic> obj) {
+    return Message(
+        obj["id"], obj["text"], obj["theme"], obj["time"], obj["is_response"]);
+  }
 }
 
 class Person {
+  String id;
   num age;
   String ageCategory;
   String gender;
@@ -15,13 +23,13 @@ class Person {
   List<String> themes;
   int messageCount;
 
-  Person(this.age, this.ageCategory, this.gender, this.idpStatus, this.location,
-      this.themes, this.messageCount);
+  Person(this.id, this.age, this.ageCategory, this.gender, this.idpStatus,
+      this.location, this.themes, this.messageCount);
 
   factory Person.fromFirebaseMap(Map<String, dynamic> obj) {
     List<String> themes =
         (obj["themes"] as List).map((t) => t.toString()).toList();
-    return Person(obj["age"], obj["age_category"], obj["gender"],
+    return Person(obj["id"], obj["age"], obj["age_category"], obj["gender"],
         obj["idp_status"], obj["location"], themes, obj["messageCount"]);
   }
 }

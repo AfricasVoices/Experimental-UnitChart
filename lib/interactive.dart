@@ -46,7 +46,7 @@ const MESSAGES_PLACEHOLDER_TEXT =
 
 // to do: make this configurable based on number of people
 const SQ_IN_ROW = 6;
-const SQ_SIZE = 12;
+const SQ_WIDTH = 12;
 
 class Interactive {
   List<model.Filter> _filters;
@@ -258,20 +258,20 @@ class Interactive {
       colData.sort(
           (p1, p2) => p1.themes.toString().compareTo(p2.themes.toString()));
 
-      num colOffset = (i + 0.5) * (chartWidth / xAxisCategories.length);
+      num colOffsetPx = (i + 0.5) * (chartWidth / xAxisCategories.length);
 
       for (var j = 0; j < colData.length; ++j) {
-        num x = (j % SQ_IN_ROW - (SQ_IN_ROW / 2)) * SQ_SIZE + colOffset;
-        num y = (CHART_HEIGHT - CHART_XAXIS_HEIGHT - (1.5 * SQ_SIZE)) -
-            (j / SQ_IN_ROW).truncate() * SQ_SIZE;
-        num xOrigin = x - (1.5 * SQ_SIZE);
-        num yOrigin = y - (1.5 * SQ_SIZE);
+        num x = (j % SQ_IN_ROW - (SQ_IN_ROW / 2)) * SQ_WIDTH + colOffsetPx;
+        num y = (CHART_HEIGHT - CHART_XAXIS_HEIGHT - (1.5 * SQ_WIDTH)) -
+            (j / SQ_IN_ROW).floor() * SQ_WIDTH;
+        num xOrigin = x - (1.5 * SQ_WIDTH);
+        num yOrigin = y - (1.5 * SQ_WIDTH);
 
         var sqGroup = svg.SvgElement.tag("g")
           ..setAttribute("transform-origin", "$xOrigin $yOrigin")
           ..onClick.listen((e) => this._loadMessages(colData[j].id))
           ..onMouseEnter
-              .listen((e) => this.handleMouseEnter(e.currentTarget, SQ_SIZE))
+              .listen((e) => this.handleMouseEnter(e.currentTarget, SQ_WIDTH))
           ..onMouseOut.listen((e) => this.handleMouseOut(e.currentTarget));
 
         var themes = colData[j].themes;
@@ -279,8 +279,8 @@ class Interactive {
         var square = svg.RectElement()
           ..setAttribute("x", x.toString())
           ..setAttribute("y", y.toString())
-          ..setAttribute("width", SQ_SIZE.toString())
-          ..setAttribute("height", SQ_SIZE.toString())
+          ..setAttribute("width", SQ_WIDTH.toString())
+          ..setAttribute("height", SQ_WIDTH.toString())
           ..setAttribute("fill", _getThemeColor(primaryTheme))
           ..setAttribute("stroke", "white")
           ..setAttribute("stroke-width", "2");
@@ -289,9 +289,9 @@ class Interactive {
         if (themes.length > 1) {
           String secondaryTheme = themes[1];
           var circle = svg.CircleElement()
-            ..setAttribute("cx", (x + (SQ_SIZE / 2)).toString())
-            ..setAttribute("cy", (y + (SQ_SIZE / 2)).toString())
-            ..setAttribute("r", (SQ_SIZE / 6).toString())
+            ..setAttribute("cx", (x + (SQ_WIDTH / 2)).toString())
+            ..setAttribute("cy", (y + (SQ_WIDTH / 2)).toString())
+            ..setAttribute("r", (SQ_WIDTH / 6).toString())
             ..setAttribute("fill", _getThemeColor(secondaryTheme))
             ..setAttribute("pointer-events", "none");
           sqGroup.append(circle);
@@ -306,9 +306,11 @@ class Interactive {
     return chartWrapper..append(svgContainer);
   }
 
-  void handleMouseEnter(svg.SvgElement rect, int w) {
+  void handleMouseEnter(svg.SvgElement rect, int sqWidth) {
     rect.parent.append(rect);
-    rect..setAttribute("transform", "translate(${-2 * w}, ${-2 * w}) scale(2)");
+    rect
+      ..setAttribute(
+          "transform", "translate(${-2 * sqWidth}, ${-2 * sqWidth}) scale(2)");
   }
 
   void handleMouseOut(svg.SvgElement rect) {

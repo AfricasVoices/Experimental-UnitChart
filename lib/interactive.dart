@@ -136,14 +136,11 @@ class Interactive {
   String _lookupFilterLabels(String filter, String option) {
     String label = "Unknown";
     for (var f in _filters) {
-      if (f.value == filter) {
-        for (var o in f.options) {
-          if (o.value == option) {
-            label = o.label;
-            continue;
-          }
+      if (f.value != filter) continue;
+      for (var o in f.options) {
+        if (o.value == option) {
+          return o.label;
         }
-        continue;
       }
     }
     return label;
@@ -155,7 +152,6 @@ class Interactive {
       for (var t in _themes) {
         if (t.value == theme) {
           labels.add(t.label);
-          continue;
         }
       }
     }

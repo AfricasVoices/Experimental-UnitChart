@@ -20,6 +20,7 @@ html, body {
   background-color: var(--body);
   line-height: 1.2em;
   cursor: default;
+  font-size: 14px;
 }
 
 h1 {
@@ -29,11 +30,6 @@ h1 {
 }
 
 label {
-  display: block;
-  font-size: 0.7em;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
   opacity: 0.8;
 }
 
@@ -104,6 +100,34 @@ nav img {
   margin-left: -24px;
 }
 
+.tool-tip {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px) saturate(200%);
+  border-radius: 3px;
+  color: white;
+  max-width: 240px;
+  opacity: 1;
+  padding: 6px 12px;
+  position: absolute;
+  z-index: 1;
+}
+
+.tool-tip td {
+  font-size: 13px;
+  padding: 3px 6px;
+  vertical-align: text-top;
+}
+
+.tool-tip td:first-child {
+  opacity: 0.5;
+  padding-left: 0;
+  white-space: nowrap;
+}
+
+.tool-tip td:last-child {
+  padding-right: 0;
+}
+
 /* Chart */
 .filter-wrapper {
   margin-bottom: 18px;
@@ -131,7 +155,6 @@ nav img {
   margin-bottom: 12px;
   border-radius: 3px;
   background-color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
 }
 
 .message-question {

@@ -11,5 +11,6 @@
   "themesDoc": "themes",
   "dataDoc": "data",
   "peopleCollection": "people",
-  "messagesCollection": "messages"
+  "messagesCollection": "messages",
+  "allowedEmailDomains": "lark.systems|africasvoices.org"
 }

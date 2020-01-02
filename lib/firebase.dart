@@ -8,6 +8,8 @@ firestore.DocumentReference _themesRef;
 firestore.CollectionReference _peopleRef;
 firestore.CollectionReference _messagesRef;
 
+firebase.Auth get firebaseAuth => firebase.auth();
+
 init() async {
   await fb_constants.init();
 
@@ -37,6 +39,17 @@ init() async {
       .collection(fb_constants.messagesCollection);
 }
 
+// Auth login and logout
+Future<firebase.UserCredential> googleLogin() async {
+  var provider = firebase.GoogleAuthProvider();
+  return firebaseAuth.signInWithPopup(provider);
+}
+
+void signout() {
+  firebaseAuth.signOut();
+}
+
+// Read data
 Future<List<model.Filter>> readFilters() async {
   var snapshot = await _filtersRef.get();
   return snapshot

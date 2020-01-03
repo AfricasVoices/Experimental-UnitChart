@@ -2,6 +2,9 @@ import 'package:firebase/firebase.dart' as firebase;
 import 'package:firebase/firestore.dart' as firestore;
 import 'firebase_constants.dart' as fb_constants;
 import 'package:avf/model.dart' as model;
+import 'package:avf/logger.dart';
+
+Logger logger = Logger("firebase.dart");
 
 firestore.DocumentReference _filtersRef;
 firestore.DocumentReference _themesRef;
@@ -47,6 +50,11 @@ Future<firebase.UserCredential> googleLogin() async {
 
 void signout() {
   firebaseAuth.signOut();
+}
+
+void deleteUser() async {
+  await firebaseAuth.currentUser.delete();
+  logger.log("User deleted and signed out");
 }
 
 // Read data

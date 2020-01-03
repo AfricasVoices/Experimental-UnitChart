@@ -45,9 +45,9 @@ class App {
     logoutButton.onClick.listen((_) => fb.signout());
   }
 
-  void _fbAuthChanged(firebase.User user) {
+  void _fbAuthChanged(firebase.User user) async {
     if (user == null) {
-      logger.log("User signed out");
+      logger.log("User not signedin");
       loginModal.removeAttribute("hidden");
       _interactiveInstance?.clear();
       return;
@@ -56,6 +56,7 @@ class App {
     if (!fb_constants.allowedEmailDomains
         .any((domain) => user.email.endsWith(domain))) {
       logger.error("Email domain not allowed");
+      await fb.deleteUser();
       loginError
         ..removeAttribute("hidden")
         ..innerText = "Email domain not allowed";
@@ -64,6 +65,7 @@ class App {
 
     if (!user.emailVerified) {
       logger.error("Email not verified");
+      await fb.deleteUser();
       loginError
         ..removeAttribute("hidden")
         ..innerText = "Email is not verified";

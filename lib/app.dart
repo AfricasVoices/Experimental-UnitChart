@@ -41,8 +41,8 @@ class App {
   void initFirebase() async {
     await fb.init();
     fb.firebaseAuth.onAuthStateChanged.listen(_fbAuthChanged);
-    loginButton.onClick.listen((_) => fb.googleLogin());
-    logoutButton.onClick.listen((_) => fb.signout());
+    loginButton.onClick.listen((_) => fb.signInWithGoogle());
+    logoutButton.onClick.listen((_) => fb.signOut());
   }
 
   void _fbAuthChanged(firebase.User user) async {

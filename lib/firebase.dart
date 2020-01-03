@@ -43,12 +43,12 @@ init() async {
 }
 
 // Auth login and logout
-Future<firebase.UserCredential> googleLogin() async {
+Future<firebase.UserCredential> signInWithGoogle() async {
   var provider = firebase.GoogleAuthProvider();
   return firebaseAuth.signInWithPopup(provider);
 }
 
-void signout() {
+void signOut() {
   firebaseAuth.signOut();
 }
 

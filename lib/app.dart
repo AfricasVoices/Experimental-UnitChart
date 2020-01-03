@@ -1,8 +1,11 @@
 import 'dart:html' as html;
+import 'package:avf/logger.dart';
 import 'package:firebase/firebase.dart' as firebase;
 import 'package:avf/firebase.dart' as fb;
 import 'firebase_constants.dart' as fb_constants;
 import 'package:avf/interactive.dart' as interactive;
+
+Logger logger = Logger("app.dart");
 
 html.DivElement get content => html.querySelector("#content");
 html.DivElement get container => html.querySelector("#container");
@@ -44,7 +47,7 @@ class App {
 
   void _fbAuthChanged(firebase.User user) {
     if (user == null) {
-      print("User signed out");
+      logger.log("User signed out");
       loginModal.removeAttribute("hidden");
       _interactiveInstance?.clear();
       return;
@@ -52,7 +55,7 @@ class App {
 
     if (!fb_constants.allowedEmailDomains
         .any((domain) => user.email.endsWith(domain))) {
-      print("error email domain not allowed");
+      logger.error("Email domain not allowed");
       loginError
         ..removeAttribute("hidden")
         ..innerText = "Email domain not allowed";
@@ -60,7 +63,7 @@ class App {
     }
 
     if (!user.emailVerified) {
-      print("email not verified");
+      logger.error("Email not verified");
       loginError
         ..removeAttribute("hidden")
         ..innerText = "Email is not verified";

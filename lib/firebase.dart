@@ -2,11 +2,16 @@ import 'package:firebase/firebase.dart' as firebase;
 import 'package:firebase/firestore.dart' as firestore;
 import 'firebase_constants.dart' as fb_constants;
 import 'package:avf/model.dart' as model;
+import 'package:avf/logger.dart';
+
+Logger logger = Logger("firebase.dart");
 
 firestore.DocumentReference _filtersRef;
 firestore.DocumentReference _themesRef;
 firestore.CollectionReference _peopleRef;
 firestore.CollectionReference _messagesRef;
+
+firebase.Auth get firebaseAuth => firebase.auth();
 
 init() async {
   await fb_constants.init();
@@ -37,6 +42,22 @@ init() async {
       .collection(fb_constants.messagesCollection);
 }
 
+// Auth login and logout
+Future<firebase.UserCredential> signInWithGoogle() async {
+  var provider = firebase.GoogleAuthProvider();
+  return firebaseAuth.signInWithPopup(provider);
+}
+
+void signOut() {
+  firebaseAuth.signOut();
+}
+
+void deleteUser() async {
+  await firebaseAuth.currentUser.delete();
+  logger.log("User deleted and signed out");
+}
+
+// Read data
 Future<List<model.Filter>> readFilters() async {
   var snapshot = await _filtersRef.get();
   return snapshot

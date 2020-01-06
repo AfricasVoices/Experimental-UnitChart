@@ -60,6 +60,10 @@ nav {
   z-index: 100;
 }
 
+nav a, nav a:hover {
+  color: white;
+}
+
 nav img {
   max-height: 18px;
   max-width: 18px;
@@ -228,4 +232,37 @@ footer {
 
 .footer-progress--filled {
   background: var(--footer-progress--filled);
+}
+
+/* Login modal */
+.modal-wrapper {
+  background-color: rgba(100, 50, 70, 0.9);
+  height: 100%;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.modal-content {
+  background-color: white;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 120px;
+  max-width: 320px;
+  padding: 24px;
+  text-align: center;
+}
+
+/* Animate */
+.blink {
+  animation: blink 1s linear infinite;
+}
+
+@keyframes blink{
+  0%{opacity: 0;}
+  50%{opacity: .5;}
+  100%{opacity: 1;}
 }

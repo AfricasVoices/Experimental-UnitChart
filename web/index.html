@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./styles/bootstrap.css">
     <link rel="stylesheet" href="./styles/index.css">
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
     <script defer src="main.dart.js"></script>
 </head>
@@ -22,9 +23,7 @@
         <span class="nav-title">Live social insights from conversations</span>
       </div>
       <div class="col-lg-3 col-sm-4 col-4 text-right">
-        <span class="nav-share-label">Share</span>
-        <img src="./images/facebook.svg" />
-        <img src="./images/twitter.svg" />
+        <a href="#" id="logout-button">Logout</a>
       </div>
     </div>
   </nav>
@@ -34,9 +33,7 @@
     <div class="container hidden" id="container">
       <div data-slide="0">
         <h1>Title of the chart</h1>
-        <div id="interactive">
-          <div class="text-center">Loading interactive chart ..</div>
-        </div>
+        <div id="interactive"></div>
       </div>
       <div data-slide="1">2</div>
       <div data-slide="2">3</div>
@@ -63,5 +60,15 @@
       </div>
     </div>
   </footer>
+
+  <!-- Login modal -->
+  <div class="modal-wrapper" id="login-modal">
+    <div class="modal-content">
+      <h5>This demo is only accessible to Africa's Voices.</h5>
+      <p>Please reach out if you'd like to see a demo.</p>
+      <button class="btn btn-danger" id="login-button">Sign in with Google</button>
+      <div class="alert alert-primary" id="login-error" hidden="true"></div>
+    </div>
+  </div>
 </body>
 </html>

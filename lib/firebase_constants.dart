@@ -27,3 +27,6 @@ String get themesDoc => _constants['themesDoc'];
 String get dataDoc => _constants['dataDoc'];
 String get peopleCollection => _constants['peopleCollection'];
 String get messagesCollection => _constants['messagesCollection'];
+// this need to be same as domains in the firebase database access-control rules
+List<String> get allowedEmailDomains =>
+    _constants['allowedEmailDomains'].split("|");

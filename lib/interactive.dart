@@ -17,6 +17,7 @@ const SQ_WIDTH = 12;
 const HTML_BODY_SELECTOR = "body";
 const ROW_CSS_CLASS = "row";
 const CONTAINER_CSS_CLASS = "container";
+const ANIMATE_BLINK_CSS_CLASS = "blink";
 
 // Filter CSS classes
 const FILTER_COLUMN_CSS_CLASSES = ["col-lg-2", "col-md-4", "col-sm-4", "col-4"];
@@ -47,6 +48,8 @@ const MESSAGE_CSS_CLASS = "message";
 const MESSAGES_RESPONSE_CSS_CLASS = "message-response";
 const MESSAGES_QUESTION_CSS_CLASS = "message-question";
 const PLACEHOLDER_CSS_CLASS = "placeholder";
+const CHART_LOADING_PLACEHOLDER_TEXT = "Loading interactive chart data...";
+const CHART_CLEAR_PLACEHOLDER_TEXT = "Interactive chart cleared";
 const MESSAGES_PLACEHOLDER_TEXT =
     "Click on square to view messages between the person and Africa's voices's volunteers.";
 
@@ -76,7 +79,12 @@ class Interactive {
   }
 
   init() async {
-    await fb.init();
+    _container.nodes.clear();
+    var placeholder = html.ParagraphElement()
+      ..classes = [ANIMATE_BLINK_CSS_CLASS]
+      ..appendText(CHART_LOADING_PLACEHOLDER_TEXT);
+    _container.append(placeholder);
+
     await _loadFilters();
     await _loadThemes();
     _selected = model.Selected();
@@ -106,6 +114,19 @@ class Interactive {
     _renderChart();
     _renderMessages();
     _renderLegend();
+  }
+
+  void clear() {
+    _filters?.clear();
+    _themes?.clear();
+    _messages?.clear();
+    _people?.clear();
+    _selected = null;
+    _container.nodes.clear();
+
+    var placeholder = html.ParagraphElement()
+      ..appendText(CHART_CLEAR_PLACEHOLDER_TEXT);
+    _container.append(placeholder);
   }
 
   // Utils

@@ -5,7 +5,7 @@
   --body: #f3f3f3;
   --nav: rgba(0, 0, 0, 0.8);
   --nav-title: #f9b600;
-  --footer: #40a1ac;
+  --footer: rgba(64, 161, 172, 0.8);
   --footer-text: white;
   --footer-progress: rgba(0, 0, 0, 0.2);
   --footer-progress--filled: rgba(255, 255, 255, 0.9);
@@ -94,6 +94,18 @@ nav img {
   min-height: 100vh;
   padding-top: 72px;
   padding-bottom: 72px;
+}
+
+.logo {
+  height: 64px;
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.content-width--small {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 480px;
 }
 
 .filter-wrapper {
@@ -198,6 +210,7 @@ footer {
   width: 100%;
   bottom: 0;
   background-color: var(--footer);
+  /* backdrop-filter: blur(2px) saturate(200%); */
 }
 
 .footer-button {

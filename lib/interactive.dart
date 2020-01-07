@@ -3,6 +3,7 @@ import 'dart:svg' as svg;
 import 'package:avf/logger.dart';
 import 'package:avf/model.dart' as model;
 import 'package:avf/firebase.dart' as fb;
+import 'dart:js' as js;
 
 Logger logger = Logger("interactive.dart");
 
@@ -255,11 +256,17 @@ class Interactive {
     """;
   }
 
+  bool isTouchDevice() {
+    return js.context.callMethod('hasTouchSupport');
+  }
+
   void _handleMouseEnter(
       svg.SvgElement rect, num x, num y, model.Person person) {
-    var dist = -2 * SQ_WIDTH;
-    rect.parent.append(rect);
-    rect..setAttribute("transform", "translate($dist, $dist) scale(2)");
+    if (!isTouchDevice()) {
+      var dist = -2 * SQ_WIDTH;
+      rect.parent.append(rect);
+      rect..setAttribute("transform", "translate($dist, $dist) scale(2)");
+    }
 
     _tooltip
       ..nodes.clear()
@@ -270,7 +277,10 @@ class Interactive {
   }
 
   void _handleMouseOut(svg.SvgElement rect) {
-    rect..setAttribute("transform", "translate(0, 0) scale(1)");
+    if (!isTouchDevice()) {
+      rect..setAttribute("transform", "translate(0, 0) scale(1)");
+    }
+
     _tooltip..setAttribute("hidden", "true");
   }
 

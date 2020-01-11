@@ -11,8 +11,9 @@ const CHART_HEIGHT = 480;
 const CHART_PADDING = 18;
 const CHART_XAXIS_HEIGHT = 25;
 const TOOLTIP_OFFSET = 25;
-const SQ_IN_ROW = 6;
-const SQ_WIDTH = 12;
+const SQ_IN_ROW = 36;
+const SQ_WIDTH = 5;
+const SPACE_BTWN_SQ = 1;
 
 const HTML_BODY_SELECTOR = "body";
 const ROW_CSS_CLASS = "row";
@@ -229,6 +230,7 @@ class Interactive {
   }
 
   String _getTooltipContent(model.Person person) {
+    var displayAge = person.age < 0 ? 'Unknown' : '${person.age} years';
     return """
       <table>
         <tr>
@@ -237,7 +239,7 @@ class Interactive {
         </tr>
         <tr>
           <td>Age</td>
-          <td>${person.age} years</td>
+          <td>${displayAge}</td>
         </tr>
         <tr>
           <td>IDP Status</td>
@@ -466,7 +468,7 @@ class Interactive {
           ..setAttribute("fill", _getThemeColor(primaryTheme))
           ..setAttribute(
               "stroke", colData[j].id == _selected.personID ? "black" : "white")
-          ..setAttribute("stroke-width", "2");
+          ..setAttribute("stroke-width", SPACE_BTWN_SQ.toString());
         sqGroup.append(square);
 
         if (themes.length > 1) {

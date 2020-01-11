@@ -538,7 +538,7 @@ class Interactive {
       var legendColumn = html.DivElement()..classes = LEGEND_COLUMN_CSS_CLASSES;
       var legendColor = html.LabelElement()
         ..classes = [LEGEND_ITEM_CSS_CLASS]
-        ..innerText = theme.label
+        ..innerText = theme.label.replaceAll("_", " ")
         ..style.borderLeftColor = theme.color;
       legendColumn.append(legendColor);
 

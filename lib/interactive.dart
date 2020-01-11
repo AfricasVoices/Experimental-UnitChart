@@ -11,8 +11,8 @@ const CHART_HEIGHT = 480;
 const CHART_PADDING = 18;
 const CHART_XAXIS_HEIGHT = 25;
 const TOOLTIP_OFFSET = 25;
-const SQ_IN_ROW = 36;
-const SQ_WIDTH = 5;
+var SQ_IN_ROW = 12;
+const SQ_WIDTH = 8;
 const SPACE_BTWN_SQ = 1;
 
 const HTML_BODY_SELECTOR = "body";
@@ -418,17 +418,22 @@ class Interactive {
       switch (_selected.metric) {
         case "age_category":
           key = people.ageCategory;
+          SQ_IN_ROW = 12;
           break;
         case "gender":
           key = people.gender;
+          SQ_IN_ROW = 24;
           break;
         case "idp_status":
           key = people.idpStatus;
+          SQ_IN_ROW = 24;
           break;
         default:
           logger.error("Selected metric ${_selected.metric} not found");
       }
-      peopleByLabel[key].add(people);
+      if (peopleByLabel[key] != null) {
+        peopleByLabel[key].add(people);
+      }
     });
 
     for (var i = 0; i < xAxisCategories.length; ++i) {

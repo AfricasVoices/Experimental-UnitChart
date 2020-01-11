@@ -1,7 +1,5 @@
 import 'dart:core';
 
-List<String> knownGenders = ["male", "female"];
-
 class Message {
   String id;
   String text;
@@ -34,14 +32,9 @@ class Person {
     var age = int.tryParse(obj["age"]);
     if (age == null) age = -1;
 
-    var gender = obj["gender"];
-    if (!knownGenders.contains(gender)) {
-      gender = "unknown";
-    }
-
     List<String> themes =
         (obj["themes"] as List).map((t) => t.toString()).toList();
-    return Person(obj["id"], age, obj["age_category"], gender,
+    return Person(obj["id"], age, obj["age_category"], obj["gender"],
         obj["idp_status"], obj["location"], themes, obj["messageCount"]);
   }
 }

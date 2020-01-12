@@ -100,7 +100,7 @@ nav img {
   margin-bottom: 32px;
 }
 
-.filter-wrapper select.filter-option {
+.filter-wrapper #filter-option {
   margin-left: -24px;
 }
 

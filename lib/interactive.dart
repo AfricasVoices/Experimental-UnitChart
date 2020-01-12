@@ -338,10 +338,11 @@ class Interactive {
   }
 
   html.DivElement _getFilterOptionDropdown() {
-    var wrapper = html.DivElement()..classes = FILTER_COLUMN_CSS_CLASSES;
+    var wrapper = html.DivElement()
+      ..classes = FILTER_COLUMN_CSS_CLASSES
+      ..id = FILTER_OPTION_CSS_CLASS;
     var label = html.LabelElement()..innerText = ".";
     var select = html.SelectElement()
-      ..classes = [FILTER_OPTION_CSS_CLASS]
       ..onChange.listen(
           (e) => _updateFilterOption((e.target as html.SelectElement).value));
     var emptyOption = html.OptionElement()

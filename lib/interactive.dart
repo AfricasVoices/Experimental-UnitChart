@@ -51,7 +51,7 @@ const PLACEHOLDER_CSS_CLASS = "placeholder";
 const CHART_LOADING_PLACEHOLDER_TEXT = "Loading interactive chart data...";
 const CHART_CLEAR_PLACEHOLDER_TEXT = "Interactive chart cleared";
 const MESSAGES_PLACEHOLDER_TEXT =
-    "[Coming soon] Click on square to view messages between the person and Africa's voices's volunteers.";
+    "Click on square to view messages between the person and Africa's voices's team.";
 
 // Legend CSS classes
 const LEGEND_COLUMN_CSS_CLASSES = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
@@ -278,9 +278,8 @@ class Interactive {
     evt.stopPropagation();
     _selected.updatePerson(personID);
     _renderChart();
-    /* TODO: uncomment this when messages are ready to be shown */
-    // await _loadMessages(personID);
-    // _renderMessages();
+    await _loadMessages(personID);
+    _renderMessages();
   }
 
   void _clearSelectedPerson() {

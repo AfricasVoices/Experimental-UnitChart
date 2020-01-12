@@ -10,8 +10,8 @@ class Message {
   Message(this.id, this.text, this.theme, this.time, this.isResponse);
 
   factory Message.fromFirebaseMap(Map<String, dynamic> obj) {
-    return Message(
-        obj["id"], obj["text"], obj["theme"], obj["time"], obj["is_response"]);
+    return Message(obj["id"].toString(), obj["text"], obj["theme"], obj["time"],
+        obj["is_response"]);
   }
 }
 

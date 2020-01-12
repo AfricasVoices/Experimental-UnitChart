@@ -289,6 +289,7 @@ class Interactive {
   }
 
   void _handleClick(html.MouseEvent evt, String personID) async {
+    logger.log("Messages for person with ID ${personID} loading");
     evt.stopPropagation();
     _selected.updatePerson(personID);
     _renderChart();

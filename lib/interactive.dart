@@ -261,11 +261,13 @@ class Interactive {
     rect.parent.append(rect);
     rect..setAttribute("transform", "translate($dist, $dist) scale(2)");
 
+    int pageTopOffset = html.document.documentElement.scrollTop;
+
     _tooltip
       ..nodes.clear()
       ..setInnerHtml(_getTooltipContent(person))
       ..style.setProperty("left", "${x + TOOLTIP_OFFSET}px")
-      ..style.setProperty("top", "${y - 4 * TOOLTIP_OFFSET}px")
+      ..style.setProperty("top", "${y - 4 * TOOLTIP_OFFSET + pageTopOffset}px")
       ..removeAttribute("hidden");
   }
 

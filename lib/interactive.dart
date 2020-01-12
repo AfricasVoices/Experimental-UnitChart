@@ -536,13 +536,17 @@ class Interactive {
         text = "AVF: $text";
         msgClass = MESSAGES_QUESTION_CSS_CLASS;
       }
-      var messageDiv = html.DivElement()
-        ..appendText(text)
-        ..classes = [MESSAGE_CSS_CLASS, msgClass]
-        ..style.borderLeftColor = message.theme != null
-            ? "${_getThemeColor(message.theme)}"
-            : "white";
-      wrapper.append(messageDiv);
+
+      var messages = text.split(";");
+      for (var msg in messages) {
+        var messageDiv = html.DivElement()
+          ..appendText(msg)
+          ..classes = [MESSAGE_CSS_CLASS, msgClass]
+          ..style.borderLeftColor = message.theme != null
+              ? "${_getThemeColor(message.theme)}"
+              : "white";
+        wrapper.append(messageDiv);
+      }
     }
 
     _messagesColumn.append(wrapper);

@@ -1,0 +1,16 @@
+{
+  "apiKey": "AIzaSyCUm5b5RNG4DbQLwE68lyYsRa2LEW2M1JE",
+  "authDomain": "avf-dashboards-test.firebaseapp.com",
+  "databaseURL": "https://avf-dashboards-test.firebaseio.com",
+  "projectId": "avf-dashboards-test",
+  "storageBucket": "avf-dashboards-test.appspot.com",
+  "messagingSenderId": "5161953516",
+  "appId": "1:5161953516:web:374f838f07c481d0e89dc9",
+  "chartCollection": "unit-chart",
+  "filtersDoc": "filters",
+  "themesDoc": "themes",
+  "dataDoc": "data",
+  "peopleCollection": "people",
+  "messagesCollection": "messages",
+  "allowedEmailDomains": "lark.systems|africasvoices.org"
+}

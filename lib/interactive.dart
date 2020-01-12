@@ -12,8 +12,9 @@ const CHART_HEIGHT = 480;
 const CHART_PADDING = 18;
 const CHART_XAXIS_HEIGHT = 25;
 const TOOLTIP_OFFSET = 25;
-const SQ_IN_ROW = 6;
-const SQ_WIDTH = 12;
+var SQ_IN_ROW = 12;
+const SQ_WIDTH = 8;
+const SPACE_BTWN_SQ = 1;
 
 const HTML_BODY_SELECTOR = "body";
 const ROW_CSS_CLASS = "row";
@@ -230,6 +231,7 @@ class Interactive {
   }
 
   String _getTooltipContent(model.Person person) {
+    var displayAge = person.age < 0 ? 'Unknown' : '${person.age} years';
     return """
       <table>
         <tr>
@@ -238,7 +240,7 @@ class Interactive {
         </tr>
         <tr>
           <td>Age</td>
-          <td>${person.age} years</td>
+          <td>${displayAge}</td>
         </tr>
         <tr>
           <td>IDP Status</td>
@@ -429,17 +431,22 @@ class Interactive {
       switch (_selected.metric) {
         case "age_category":
           key = people.ageCategory;
+          SQ_IN_ROW = 12;
           break;
         case "gender":
           key = people.gender;
+          SQ_IN_ROW = 24;
           break;
         case "idp_status":
           key = people.idpStatus;
+          SQ_IN_ROW = 24;
           break;
         default:
           logger.error("Selected metric ${_selected.metric} not found");
       }
-      peopleByLabel[key].add(people);
+      if (peopleByLabel[key] != null) {
+        peopleByLabel[key].add(people);
+      }
     });
 
     for (var i = 0; i < xAxisCategories.length; ++i) {
@@ -479,7 +486,7 @@ class Interactive {
           ..setAttribute("fill", _getThemeColor(primaryTheme))
           ..setAttribute(
               "stroke", colData[j].id == _selected.personID ? "black" : "white")
-          ..setAttribute("stroke-width", "2");
+          ..setAttribute("stroke-width", SPACE_BTWN_SQ.toString());
         sqGroup.append(square);
 
         if (themes.length > 1) {
@@ -544,7 +551,7 @@ class Interactive {
       var legendColumn = html.DivElement()..classes = LEGEND_COLUMN_CSS_CLASSES;
       var legendColor = html.LabelElement()
         ..classes = [LEGEND_ITEM_CSS_CLASS]
-        ..innerText = theme.label
+        ..innerText = theme.label.replaceAll("_", " ")
         ..style.borderLeftColor = theme.color;
       legendColumn.append(legendColor);
 

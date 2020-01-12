@@ -1,3 +1,5 @@
+import 'dart:core';
+
 class Message {
   String id;
   String text;
@@ -27,9 +29,12 @@ class Person {
       this.location, this.themes, this.messageCount);
 
   factory Person.fromFirebaseMap(Map<String, dynamic> obj) {
+    var age = int.tryParse(obj["age"]);
+    if (age == null) age = -1;
+
     List<String> themes =
         (obj["themes"] as List).map((t) => t.toString()).toList();
-    return Person(obj["id"], obj["age"], obj["age_category"], obj["gender"],
+    return Person(obj["id"], age, obj["age_category"], obj["gender"],
         obj["idp_status"], obj["location"], themes, obj["messageCount"]);
   }
 }

@@ -126,6 +126,7 @@ nav img {
   opacity: 0.5;
   padding-left: 0;
   white-space: nowrap;
+  text-align: right;
 }
 
 .tool-tip td:last-child {
@@ -190,6 +191,10 @@ nav img {
   height: calc(100% - 6px);
   display: inline-block;
   margin-bottom: 6px;
+  text-transform: capitalize;
+}
+
+.capitalise-text {
   text-transform: capitalize;
 }
 

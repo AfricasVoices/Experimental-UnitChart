@@ -58,6 +58,7 @@ const MESSAGES_PLACEHOLDER_TEXT =
 // Legend CSS classes
 const LEGEND_COLUMN_CSS_CLASSES = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
 const LEGEND_ITEM_CSS_CLASS = "legend-item";
+const CAPITALISE_TEXT_CSS_CLASS = "capitalise-text";
 
 class Interactive {
   List<model.Filter> _filters;
@@ -232,6 +233,7 @@ class Interactive {
 
   String _getTooltipContent(model.Person person) {
     var displayAge = person.age < 0 ? 'Unknown' : '${person.age} years';
+    var displayThemes = _lookupThemeLabels(person.themes).replaceAll("_", " ");
     return """
       <table>
         <tr>
@@ -248,11 +250,11 @@ class Interactive {
         </tr>
         <tr>
           <td>Location</td>
-          <td>${person.location}</td>
+          <td class='${CAPITALISE_TEXT_CSS_CLASS}'>${person.location}</td>
         </tr>
         <tr>
           <td>Talked about</td>
-          <td>${_lookupThemeLabels(person.themes)}</td>
+          <td class='${CAPITALISE_TEXT_CSS_CLASS}'>${displayThemes}</td>
         </tr>
       </table>
     """;

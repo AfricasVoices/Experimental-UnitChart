@@ -8,6 +8,7 @@ import 'dart:js' as js;
 Logger logger = Logger("interactive.dart");
 
 const DEFAULT_CHART_WIDTH = 300;
+const MIN_CHART_WIDTH = 600;
 const CHART_HEIGHT = 480;
 const CHART_PADDING = 18;
 const CHART_XAXIS_HEIGHT = 25;
@@ -52,6 +53,7 @@ const MESSAGES_QUESTION_CSS_CLASS = "message-question";
 const PLACEHOLDER_CSS_CLASS = "placeholder";
 const CHART_LOADING_PLACEHOLDER_TEXT = "Loading interactive chart data...";
 const CHART_CLEAR_PLACEHOLDER_TEXT = "Interactive chart cleared";
+const MESSAGES_LABEL = "Messages";
 const MESSAGES_PLACEHOLDER_TEXT =
     "Click on square to view messages between the person and Africa's voices's team.";
 
@@ -67,6 +69,7 @@ class Interactive {
   List<model.Person> _people;
   num _chartWidth;
   model.Selected _selected;
+  int _chartScrollLeft = 0;
 
   html.DivElement _container;
   html.SpanElement _tooltip;
@@ -145,6 +148,10 @@ class Interactive {
     body.append(container);
     width = col.clientWidth;
     container.remove();
+
+    if (width < MIN_CHART_WIDTH) {
+      width = MIN_CHART_WIDTH;
+    }
 
     return width;
   }
@@ -306,6 +313,7 @@ class Interactive {
     _renderChart();
     _messages = null;
     _renderMessages();
+    _chartScrollLeft = 0;
   }
 
   // Render
@@ -391,6 +399,10 @@ class Interactive {
     if (_selected.filter != null) {
       _filtersWrapper.append(_getFilterOptionDropdown());
     }
+  }
+
+  void _setChartScroll(html.Event event) {
+    _chartScrollLeft = (event.target as html.DivElement).scrollLeft;
   }
 
   void _renderChart() {
@@ -509,12 +521,17 @@ class Interactive {
       svgContainer.append(colSVG);
     }
 
-    wrapper..append(svgContainer);
+    wrapper
+      ..append(svgContainer)
+      ..onScroll.listen((e) => _setChartScroll(e));
     _chartsColumn.append(wrapper);
+    wrapper.scroll(this._chartScrollLeft, 0);
   }
 
   void _renderMessages() {
     _messagesColumn.nodes.clear();
+    var title = html.HeadingElement.h5()..innerText = MESSAGES_LABEL;
+    _messagesColumn.append(title);
     var wrapper = html.DivElement()..classes = [MESSAGES_WRAPPER_CSS_CLASS];
 
     if (_messages == null) {

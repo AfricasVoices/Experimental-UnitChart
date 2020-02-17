@@ -6,6 +6,7 @@ import 'package:avf/firebase.dart' as fb;
 import 'dart:js' as js;
 
 Logger logger = Logger("interactive.dart");
+html.DivElement get loadingModal => html.querySelector("#loading-modal");
 
 const DEFAULT_CHART_WIDTH = 300;
 const MIN_CHART_WIDTH = 600;
@@ -87,10 +88,6 @@ class Interactive {
 
   init() async {
     _container.nodes.clear();
-    var placeholder = html.ParagraphElement()
-      ..classes = [ANIMATE_BLINK_CSS_CLASS]
-      ..appendText(CHART_LOADING_PLACEHOLDER_TEXT);
-    _container.append(placeholder);
 
     await _loadFilters();
     await _loadThemes();
@@ -130,10 +127,6 @@ class Interactive {
     _people?.clear();
     _selected = null;
     _container.nodes.clear();
-
-    var placeholder = html.ParagraphElement()
-      ..appendText(CHART_CLEAR_PLACEHOLDER_TEXT);
-    _container.append(placeholder);
   }
 
   // Utils
@@ -202,7 +195,9 @@ class Interactive {
   }
 
   void _loadPeople() async {
+    loadingModal.removeAttribute("hidden");
     _people = await fb.readPeople(_selected.filter, _selected.option);
+    loadingModal.setAttribute("hidden", "true");
     logger.log("${_people.length} people loaded");
   }
 
@@ -544,7 +539,8 @@ class Interactive {
       return;
     }
 
-    wrapper.style.height = (CHART_HEIGHT + 2 * CHART_PADDING).toString() + "px";
+    wrapper.style.height =
+        (CHART_HEIGHT + 0.5 * CHART_PADDING).toString() + "px";
     wrapper.children.clear();
 
     for (var message in _messages) {

@@ -36,35 +36,15 @@
   <!-- Content -->
   <div class="app" id="content">
     <div class="container hidden" id="container">
-      <div data-slide="0">
-        <h1>Title of the chart</h1>
-        <div id="interactive"></div>
-      </div>
-      <div data-slide="1">2</div>
-      <div data-slide="2">3</div>
-      <div data-slide="3">4</div>
-      <div data-slide="4">5</div>
+      <h1>Title of the chart</h1>
+      <div id="interactive"></div>
     </div>
   </div>
 
-  <!-- Bottom navigation -->
-  <footer>
-    <div class="row">
-      <div class="col-lg-2 col-sm-3 col-4">
-        <button class="footer-button" id="prev-button" disabled>
-          ← Prev
-        </button>
-      </div>
-      <div class="col-lg-8 col-sm-6 col-4 text-center">
-        <div id="progress" class="d-flex"></div>
-      </div>
-      <div class="col-lg-2 col-sm-3 col-4 text-right">
-        <button class="footer-button" id="next-button">
-          Next →
-        </button>
-      </div>
-    </div>
-  </footer>
+  <!-- Loading modal -->
+  <div class="modal-wrapper" id="loading-modal">
+    <span>Loading data...</span>
+  </div>
 
   <!-- Login modal -->
   <div class="modal-wrapper" id="login-modal">

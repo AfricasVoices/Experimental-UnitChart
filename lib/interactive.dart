@@ -6,6 +6,7 @@ import 'package:avf/firebase.dart' as fb;
 import 'dart:js' as js;
 
 Logger logger = Logger("interactive.dart");
+html.DivElement get loadingModal => html.querySelector("#loading-modal");
 
 const DEFAULT_CHART_WIDTH = 300;
 const MIN_CHART_WIDTH = 600;
@@ -16,6 +17,7 @@ const TOOLTIP_OFFSET = 25;
 var SQ_IN_ROW = 12;
 const SQ_WIDTH = 8;
 const SPACE_BTWN_SQ = 1;
+const SHOW_DOTS_IN_SQ = false;
 
 const HTML_BODY_SELECTOR = "body";
 const ROW_CSS_CLASS = "row";
@@ -86,10 +88,6 @@ class Interactive {
 
   init() async {
     _container.nodes.clear();
-    var placeholder = html.ParagraphElement()
-      ..classes = [ANIMATE_BLINK_CSS_CLASS]
-      ..appendText(CHART_LOADING_PLACEHOLDER_TEXT);
-    _container.append(placeholder);
 
     await _loadFilters();
     await _loadThemes();
@@ -129,10 +127,6 @@ class Interactive {
     _people?.clear();
     _selected = null;
     _container.nodes.clear();
-
-    var placeholder = html.ParagraphElement()
-      ..appendText(CHART_CLEAR_PLACEHOLDER_TEXT);
-    _container.append(placeholder);
   }
 
   // Utils
@@ -201,7 +195,9 @@ class Interactive {
   }
 
   void _loadPeople() async {
+    loadingModal.removeAttribute("hidden");
     _people = await fb.readPeople(_selected.filter, _selected.option);
+    loadingModal.setAttribute("hidden", "true");
     logger.log("${_people.length} people loaded");
   }
 
@@ -504,7 +500,7 @@ class Interactive {
           ..setAttribute("stroke-width", SPACE_BTWN_SQ.toString());
         sqGroup.append(square);
 
-        if (themes.length > 1) {
+        if (SHOW_DOTS_IN_SQ == true && themes.length > 1) {
           String secondaryTheme = themes[1];
           var circle = svg.CircleElement()
             ..setAttribute("cx", (x + (SQ_WIDTH / 2)).toString())
@@ -543,7 +539,8 @@ class Interactive {
       return;
     }
 
-    wrapper.style.height = (CHART_HEIGHT + 2 * CHART_PADDING).toString() + "px";
+    wrapper.style.height =
+        (CHART_HEIGHT + 0.5 * CHART_PADDING).toString() + "px";
     wrapper.children.clear();
 
     for (var message in _messages) {

@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,500);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400, 500);
 @import url("./mobile.css");
 
 :root {
@@ -11,12 +11,13 @@
   --footer-progress--filled: rgba(255, 255, 255, 0.9);
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: var(--body);
   line-height: 1.2em;
   cursor: default;
@@ -43,7 +44,7 @@ select {
   -webkit-appearance: none;
   appearance: none;
   background-color: #fff;
-  background-image: url('./../images/dropdown.svg');
+  background-image: url("./../images/dropdown.svg");
   background-repeat: no-repeat, repeat;
   background-position: right 18px top 16px, 0 0;
   background-size: 9px auto, 100%;
@@ -60,7 +61,8 @@ nav {
   z-index: 100;
 }
 
-nav a, nav a:hover {
+nav a,
+nav a:hover {
   color: white;
 }
 
@@ -251,6 +253,21 @@ footer {
   z-index: 100;
 }
 
+#loading-modal {
+  text-align: center;
+  padding-top: 25%;
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px) saturate(50%);
+}
+
+#loading-modal span {
+  animation: blink 1s linear infinite;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  padding: 12px 18px;
+}
+
 .modal-content {
   background-color: white;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
@@ -268,8 +285,14 @@ footer {
   animation: blink 1s linear infinite;
 }
 
-@keyframes blink{
-  0%{opacity: 0;}
-  50%{opacity: .5;}
-  100%{opacity: 1;}
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }

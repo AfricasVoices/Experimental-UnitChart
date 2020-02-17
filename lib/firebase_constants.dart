@@ -23,6 +23,7 @@ String get messagingSenderId => _constants['messagingSenderId'];
 String get appId => _constants['appId'];
 String get chartCollection => _constants['chartCollection'];
 String get filtersDoc => _constants['filtersDoc'];
+String get metacodesDoc => _constants['metacodesDoc'];
 String get themesDoc => _constants['themesDoc'];
 String get dataDoc => _constants['dataDoc'];
 String get peopleCollection => _constants['peopleCollection'];

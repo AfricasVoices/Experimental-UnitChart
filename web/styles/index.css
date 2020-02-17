@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:400, 500);
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,500");
 @import url("./mobile.css");
 
 :root {
@@ -199,48 +199,6 @@ nav img {
 
 .capitalise-text {
   text-transform: capitalize;
-}
-
-/* Footer */
-footer {
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-  background-color: var(--footer);
-}
-
-.footer-button {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 12px 24px;
-  border: none;
-  color: var(--footer-text);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: bold;
-}
-
-.footer-button:hover {
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.footer-button:disabled {
-  opacity: 0.3;
-}
-
-.footer-button:disabled:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.footer-progress {
-  height: 4px;
-  margin: 2px;
-  margin-top: 20px;
-  border-radius: 3px;
-  background-color: var(--footer-progress);
-}
-
-.footer-progress--filled {
-  background: var(--footer-progress--filled);
 }
 
 /* Login modal */

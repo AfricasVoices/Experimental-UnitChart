@@ -16,6 +16,7 @@ const TOOLTIP_OFFSET = 25;
 var SQ_IN_ROW = 12;
 const SQ_WIDTH = 8;
 const SPACE_BTWN_SQ = 1;
+const SHOW_DOTS_IN_SQ = false;
 
 const HTML_BODY_SELECTOR = "body";
 const ROW_CSS_CLASS = "row";
@@ -504,7 +505,7 @@ class Interactive {
           ..setAttribute("stroke-width", SPACE_BTWN_SQ.toString());
         sqGroup.append(square);
 
-        if (themes.length > 1) {
+        if (SHOW_DOTS_IN_SQ == true && themes.length > 1) {
           String secondaryTheme = themes[1];
           var circle = svg.CircleElement()
             ..setAttribute("cx", (x + (SQ_WIDTH / 2)).toString())

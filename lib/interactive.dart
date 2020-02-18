@@ -283,7 +283,7 @@ class Interactive {
         </tr>
         <tr>
           <td>Talked about</td>
-          <td class='${CAPITALISE_TEXT_CSS_CLASS}'>${displayThemes}</td>
+          <td>${displayThemes}</td>
         </tr>
       </table>
     """;

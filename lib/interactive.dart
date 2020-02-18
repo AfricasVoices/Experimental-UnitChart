@@ -637,8 +637,15 @@ class Interactive {
 
   void _renderLegend() {
     _legendWrapper.nodes.clear();
-    _themes.sort((t1, t2) => (_themeFrequency[t2.value] ?? 0)
-        .compareTo((_themeFrequency[t1.value] ?? 0)));
+    _themes.sort((t1, t2) {
+      var t1Freq = _themeFrequency[t1.value] ?? 0;
+      var t2Freq = _themeFrequency[t2.value] ?? 0;
+
+      if (t1Freq == t2Freq) {
+        return t1.value.compareTo(t2.value);
+      }
+      return t2Freq.compareTo(t1Freq);
+    });
     _themes.forEach((theme) {
       var legendColumn = html.DivElement()..classes = LEGEND_COLUMN_CSS_CLASSES;
       var legendColor = html.LabelElement()

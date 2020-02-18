@@ -78,6 +78,11 @@ class Interactive {
   int _chartScrollLeft = 0;
   bool _showMetacodesOnly = false;
 
+  // computed people properties
+  Map<String, num> _themeFrequency = {};
+  List<model.Option> _xAxisCategories = [];
+  Map<String, List<model.Person>> _peopleByLabel = {};
+
   html.DivElement _container;
   html.SpanElement _tooltip;
   html.DivElement _filtersWrapper;
@@ -100,6 +105,7 @@ class Interactive {
     _selected = model.Selected();
     _selected.updateMetric(_filters.first.value);
     await _loadPeople();
+    _computePeopleProperties();
 
     _filtersWrapper = html.DivElement()
       ..classes = [ROW_CSS_CLASS, FILTER_WRAPPER_CSS_CLASS];
@@ -232,13 +238,58 @@ class Interactive {
     logger.log("${_messages.length} messages loaded");
   }
 
+  void _computePeopleProperties() {
+    _themeFrequency = {};
+    _peopleByLabel = {};
+
+    _xAxisCategories = _filters
+        .firstWhere((filter) => filter.value == _selected.metric)
+        .options;
+
+    for (var category in _xAxisCategories) {
+      _peopleByLabel[category.value] = List();
+    }
+
+    _people.forEach((people) {
+      var key;
+      switch (_selected.metric) {
+        case "age_category":
+          key = people.ageCategory;
+          SQ_IN_ROW = 12;
+          break;
+        case "gender":
+          key = people.gender;
+          SQ_IN_ROW = 24;
+          break;
+        case "idp_status":
+          key = people.idpStatus;
+          SQ_IN_ROW = 24;
+          break;
+        default:
+          logger.error("Selected metric ${_selected.metric} not found");
+      }
+      if (_peopleByLabel[key] != null) {
+        _peopleByLabel[key].add(people);
+        var themes = people.themes;
+        String primaryTheme = themes.isNotEmpty ? themes[0] : "";
+        if (_themeFrequency.containsKey(primaryTheme)) {
+          ++_themeFrequency[primaryTheme];
+        } else {
+          _themeFrequency[primaryTheme] = 1;
+        }
+      }
+    });
+  }
+
   // User events
   void _updateMetric(String value) async {
     _selected.updateMetric(value);
     _selected.updatePerson(null);
     await _loadPeople();
+    _computePeopleProperties();
     _renderFilters();
     _renderChart();
+    _renderLegend();
     _messages = null;
     _renderMessages();
   }
@@ -254,8 +305,10 @@ class Interactive {
     _selected.updateOption(value);
     _selected.updatePerson(null);
     await _loadPeople();
+    _computePeopleProperties();
     _renderFilters();
     _renderChart();
+    _renderLegend();
     _messages = null;
     _renderMessages();
   }
@@ -332,6 +385,7 @@ class Interactive {
     _showMetacodesOnly = !_showMetacodesOnly;
     await _loadThemes();
     await _loadPeople();
+    _computePeopleProperties();
     _renderChart();
     _renderLegend();
     _messages = null;
@@ -456,58 +510,28 @@ class Interactive {
       ..setAttribute("y2", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT}");
     svgContainer.append(xAxisLine);
 
-    var peopleByLabel = Map<String, List<model.Person>>();
-
-    var xAxisCategories = _filters
-        .firstWhere((filter) => filter.value == _selected.metric)
-        .options;
-    for (var i = 0; i < xAxisCategories.length; ++i) {
+    for (var i = 0; i < _xAxisCategories.length; ++i) {
+      // render x-axis labels
       var text = svg.TextElement()
-        ..appendText(xAxisCategories[i].label)
+        ..appendText(_xAxisCategories[i].label)
         ..classes = [XAXIS_LABEL_CSS_CLASS]
         ..setAttribute(
-            "x", "${(i + 0.5) * (chartWidth / xAxisCategories.length)}")
+            "x", "${(i + 0.5) * (chartWidth / _xAxisCategories.length)}")
         ..setAttribute("y", "${CHART_HEIGHT - CHART_XAXIS_HEIGHT / 4}");
       svgContainer.append(text);
 
-      peopleByLabel[xAxisCategories[i].value] = List();
-    }
-
-    _people.forEach((people) {
-      var key;
-      switch (_selected.metric) {
-        case "age_category":
-          key = people.ageCategory;
-          SQ_IN_ROW = 12;
-          break;
-        case "gender":
-          key = people.gender;
-          SQ_IN_ROW = 24;
-          break;
-        case "idp_status":
-          key = people.idpStatus;
-          SQ_IN_ROW = 24;
-          break;
-        default:
-          logger.error("Selected metric ${_selected.metric} not found");
-      }
-      if (peopleByLabel[key] != null) {
-        peopleByLabel[key].add(people);
-      }
-    });
-
-    for (var i = 0; i < xAxisCategories.length; ++i) {
       var colSVG = svg.SvgElement.tag("g");
 
       // cloning list of people to sort
-      List<model.Person> colData = peopleByLabel[xAxisCategories[i].value]
+      List<model.Person> colData = _peopleByLabel[_xAxisCategories[i].value]
           .map((t) => model.Person(t.id, t.age, t.ageCategory, t.gender,
               t.idpStatus, t.location, _filterThemes(t.themes), t.messageCount))
-          .toList();
-      colData.sort((p1, p2) => p2.themes.join().compareTo(p1.themes.join()));
+          .toList()
+            ..sort((p1, p2) => p2.themes.join().compareTo(p1.themes.join()));
 
-      num colOffsetPx = (i + 0.5) * (chartWidth / xAxisCategories.length);
+      num colOffsetPx = (i + 0.5) * (chartWidth / _xAxisCategories.length);
 
+      // render columns
       for (var j = 0; j < colData.length; ++j) {
         num x = (j % SQ_IN_ROW - (SQ_IN_ROW / 2)) * SQ_WIDTH + colOffsetPx;
         num y = (CHART_HEIGHT - CHART_XAXIS_HEIGHT - (1.5 * SQ_WIDTH)) -
@@ -603,11 +627,13 @@ class Interactive {
 
   void _renderLegend() {
     _legendWrapper.nodes.clear();
+    _themes.sort((t1, t2) => (_themeFrequency[t2.value] ?? 0)
+        .compareTo((_themeFrequency[t1.value] ?? 0)));
     _themes.forEach((theme) {
       var legendColumn = html.DivElement()..classes = LEGEND_COLUMN_CSS_CLASSES;
       var legendColor = html.LabelElement()
         ..classes = [LEGEND_ITEM_CSS_CLASS]
-        ..innerText = theme.label
+        ..innerText = "${theme.label} (${_themeFrequency[theme.value] ?? 0})"
         ..style.borderLeftColor = theme.color;
       legendColumn.append(legendColor);
 

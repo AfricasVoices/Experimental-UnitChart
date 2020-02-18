@@ -53,8 +53,6 @@ const MESSAGE_CSS_CLASS = "message";
 const MESSAGES_RESPONSE_CSS_CLASS = "message-response";
 const MESSAGES_QUESTION_CSS_CLASS = "message-question";
 const PLACEHOLDER_CSS_CLASS = "placeholder";
-const CHART_LOADING_PLACEHOLDER_TEXT = "Loading interactive chart data...";
-const CHART_CLEAR_PLACEHOLDER_TEXT = "Interactive chart cleared";
 const MESSAGES_LABEL = "Messages";
 const MESSAGES_PLACEHOLDER_TEXT =
     "Click on square to view messages between the person and Africa's voices's team.";

@@ -271,12 +271,9 @@ class Interactive {
       if (_peopleByLabel[key] != null) {
         _peopleByLabel[key].add(people);
         var themes = people.themes;
-        String primaryTheme = themes.isNotEmpty ? themes[0] : "";
-        if (_themeFrequency.containsKey(primaryTheme)) {
-          ++_themeFrequency[primaryTheme];
-        } else {
-          _themeFrequency[primaryTheme] = 1;
-        }
+        String primaryTheme = _getPrimaryTheme(themes);
+        _themeFrequency[primaryTheme] ??= 0;
+        ++_themeFrequency[primaryTheme];
       }
     });
   }
@@ -491,6 +488,10 @@ class Interactive {
     _chartScrollLeft = (event.target as html.DivElement).scrollLeft;
   }
 
+  String _getPrimaryTheme(List<String> themes) {
+    return themes.isNotEmpty ? themes[0] : "";
+  }
+
   void _renderChart() {
     _chartsColumn.nodes.clear();
 
@@ -527,7 +528,16 @@ class Interactive {
           .map((t) => model.Person(t.id, t.age, t.ageCategory, t.gender,
               t.idpStatus, t.location, _filterThemes(t.themes), t.messageCount))
           .toList()
-            ..sort((p1, p2) => p2.themes.join().compareTo(p1.themes.join()));
+            ..sort((p1, p2) {
+              var p1Theme = _getPrimaryTheme(p1.themes);
+              var p2Theme = _getPrimaryTheme(p2.themes);
+              var p1Freq = _themeFrequency[p2Theme] ?? 0;
+              var p2Freq = _themeFrequency[p1Theme] ?? 0;
+              if (p1Freq == p2Freq) {
+                return p1Theme.compareTo(p2Theme);
+              }
+              return p1Freq.compareTo(p2Freq);
+            });
 
       num colOffsetPx = (i + 0.5) * (chartWidth / _xAxisCategories.length);
 
@@ -547,7 +557,7 @@ class Interactive {
           ..onMouseOut.listen((e) => this._handleMouseOut(e.currentTarget));
 
         var themes = colData[j].themes;
-        String primaryTheme = themes.isNotEmpty ? themes[0] : "";
+        String primaryTheme = _getPrimaryTheme(themes);
         var square = svg.RectElement()
           ..setAttribute("x", x.toString())
           ..setAttribute("y", y.toString())

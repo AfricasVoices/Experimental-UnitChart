@@ -201,6 +201,11 @@ nav img {
   text-transform: capitalize;
 }
 
+.custom-switch {
+  padding-top: 24px;
+  padding-left: 45px;
+}
+
 /* Footer */
 footer {
   position: fixed;

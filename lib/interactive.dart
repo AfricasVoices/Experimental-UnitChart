@@ -59,6 +59,12 @@ const MESSAGES_LABEL = "Messages";
 const MESSAGES_PLACEHOLDER_TEXT =
     "Click on square to view messages between the person and Africa's voices's team.";
 
+const METACODE_SWITCH_CONTAINER_CSS_CLASS = "custom-switch";
+const METACODE_SWITCH_INPUT_CSS_CLASS = "custom-control-input";
+const METACODE_SWITCH_LABEL_CSS_CLASS = "custom-control-label";
+const METACODE_SWITCH_ID = "metacode-switch";
+const METACODE_SWITCH_TEXT = "Show only metacodes";
+
 // Legend CSS classes
 const LEGEND_COLUMN_CSS_CLASSES = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
 const LEGEND_ITEM_CSS_CLASS = "legend-item";
@@ -72,6 +78,7 @@ class Interactive {
   num _chartWidth;
   model.Selected _selected;
   int _chartScrollLeft = 0;
+  bool _showMetacodesOnly = false;
 
   html.DivElement _container;
   html.SpanElement _tooltip;
@@ -80,6 +87,7 @@ class Interactive {
   html.DivElement _chartsColumn;
   html.DivElement _messagesColumn;
   html.DivElement _legendWrapper;
+  html.DivElement _switchWrapper;
 
   Interactive(this._container) {
     _chartWidth = _computeChartWidth();
@@ -104,6 +112,7 @@ class Interactive {
       ..classes = [CHART_TOOLTIP_CSS_CLASS]
       ..setAttribute("hidden", "true");
     _legendWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
+    _switchWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
 
     _dataWrapper.append(_chartsColumn);
     _dataWrapper.append(_messagesColumn);
@@ -113,11 +122,13 @@ class Interactive {
     _container.append(_filtersWrapper);
     _container.append(_dataWrapper);
     _container.append(_legendWrapper);
+    _container.append(_switchWrapper);
 
     _renderFilters();
     _renderChart();
     _renderMessages();
     _renderLegend();
+    _renderMetacodesSwitch();
   }
 
   void clear() {
@@ -183,6 +194,18 @@ class Interactive {
     return labels.join(", ");
   }
 
+  List<String> _filterThemes(List<String> themes) {
+    List<String> labels = List();
+    for (var theme in themes) {
+      for (var t in _themes) {
+        if (t.value == theme) {
+          labels.add(theme);
+        }
+      }
+    }
+    return labels;
+  }
+
   // Data fetch
   void _loadFilters() async {
     _filters = await fb.readFilters();
@@ -190,8 +213,13 @@ class Interactive {
   }
 
   void _loadThemes() async {
-    _themes = await fb.readThemes();
-    logger.log("${_themes.length} themes loaded");
+    if (_showMetacodesOnly) {
+      _themes = await fb.readMetacodes();
+      logger.log("${_themes.length} metacodes loaded");
+    } else {
+      _themes = await fb.readThemes();
+      logger.log("${_themes.length} themes loaded");
+    }
   }
 
   void _loadPeople() async {
@@ -299,6 +327,16 @@ class Interactive {
     _selected.updatePerson(personID);
     _renderChart();
     await _loadMessages(personID);
+    _renderMessages();
+  }
+
+  void _handleMetacodeSwitch() async {
+    _showMetacodesOnly = !_showMetacodesOnly;
+    await _loadThemes();
+    await _loadPeople();
+    _renderChart();
+    _renderLegend();
+    _messages = null;
     _renderMessages();
   }
 
@@ -466,10 +504,9 @@ class Interactive {
       // cloning list of people to sort
       List<model.Person> colData = peopleByLabel[xAxisCategories[i].value]
           .map((t) => model.Person(t.id, t.age, t.ageCategory, t.gender,
-              t.idpStatus, t.location, t.themes, t.messageCount))
+              t.idpStatus, t.location, _filterThemes(t.themes), t.messageCount))
           .toList();
-      colData.sort(
-          (p1, p2) => p1.themes.toString().compareTo(p2.themes.toString()));
+      colData.sort((p1, p2) => p2.themes.join().compareTo(p1.themes.join()));
 
       num colOffsetPx = (i + 0.5) * (chartWidth / xAxisCategories.length);
 
@@ -488,7 +525,7 @@ class Interactive {
           ..onMouseOut.listen((e) => this._handleMouseOut(e.currentTarget));
 
         var themes = colData[j].themes;
-        String primaryTheme = themes.first;
+        String primaryTheme = themes.isNotEmpty ? themes[0] : "";
         var square = svg.RectElement()
           ..setAttribute("x", x.toString())
           ..setAttribute("y", y.toString())
@@ -572,11 +609,39 @@ class Interactive {
       var legendColumn = html.DivElement()..classes = LEGEND_COLUMN_CSS_CLASSES;
       var legendColor = html.LabelElement()
         ..classes = [LEGEND_ITEM_CSS_CLASS]
-        ..innerText = theme.label.replaceAll("_", " ")
+        ..innerText = theme.label
         ..style.borderLeftColor = theme.color;
       legendColumn.append(legendColor);
 
       _legendWrapper.append(legendColumn);
     });
+  }
+
+  void _renderMetacodesSwitch() {
+    _switchWrapper.nodes.clear();
+
+    var switchContainer = html.DivElement()
+      ..classes = [METACODE_SWITCH_CONTAINER_CSS_CLASS];
+
+    var switchControl = html.InputElement()
+      ..classes = [METACODE_SWITCH_INPUT_CSS_CLASS]
+      ..type = "checkbox"
+      ..id = METACODE_SWITCH_ID
+      ..onChange.listen((_) => _handleMetacodeSwitch());
+
+    if (_showMetacodesOnly) {
+      switchControl.setAttribute("checked", "true");
+    } else {
+      switchControl.removeAttribute("checked");
+    }
+
+    var switchLabel = html.LabelElement()
+      ..classes = [METACODE_SWITCH_LABEL_CSS_CLASS]
+      ..htmlFor = METACODE_SWITCH_ID
+      ..innerText = METACODE_SWITCH_TEXT;
+
+    switchContainer.append(switchControl);
+    switchContainer.append(switchLabel);
+    _switchWrapper.append(switchContainer);
   }
 }

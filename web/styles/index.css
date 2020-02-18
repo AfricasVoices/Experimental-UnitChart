@@ -201,6 +201,11 @@ nav img {
   text-transform: capitalize;
 }
 
+.custom-switch {
+  padding-top: 24px;
+  padding-left: 45px;
+}
+
 /* Login modal */
 .modal-wrapper {
   background-color: rgba(100, 50, 70, 0.9);

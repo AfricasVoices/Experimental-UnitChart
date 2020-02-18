@@ -8,6 +8,7 @@ Logger logger = Logger("firebase.dart");
 
 firestore.DocumentReference _filtersRef;
 firestore.DocumentReference _themesRef;
+firestore.DocumentReference _metacodesRef;
 firestore.CollectionReference _peopleRef;
 firestore.CollectionReference _messagesRef;
 
@@ -32,6 +33,9 @@ init() async {
   _themesRef = _store
       .collection(fb_constants.chartCollection)
       .doc(fb_constants.themesDoc);
+  _metacodesRef = _store
+      .collection(fb_constants.chartCollection)
+      .doc(fb_constants.metacodesDoc);
   _peopleRef = _store
       .collection(fb_constants.chartCollection)
       .doc(fb_constants.dataDoc)
@@ -70,6 +74,16 @@ Future<List<model.Filter>> readFilters() async {
 
 Future<List<model.Theme>> readThemes() async {
   var snapshot = await _themesRef.get();
+  return snapshot
+      .data()
+      .values
+      .map((v) => model.Theme.fromFirebaseMap(v))
+      .toList()
+        ..sort((t1, t2) => t1.order.compareTo(t2.order));
+}
+
+Future<List<model.Theme>> readMetacodes() async {
+  var snapshot = await _metacodesRef.get();
   return snapshot
       .data()
       .values

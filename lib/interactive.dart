@@ -383,18 +383,17 @@ class Interactive {
       ..selected = _selected.filter == null;
     select.append(emptyOption);
 
-    var displayFilters = List.from(_filters)
-      ..removeWhere((filter) => filter.value == KEY_THEME);
-
-    displayFilters.forEach((filter) {
-      var option = html.OptionElement()
-        ..value = filter.value
-        ..innerText = filter.label
-        ..selected = filter.value == _selected.filter;
-      if (filter.value != _selected.metric) {
-        select.append(option);
-      }
-    });
+    List.from(_filters)
+      ..removeWhere((filter) => filter.value == KEY_THEME)
+      ..forEach((filter) {
+        var option = html.OptionElement()
+          ..value = filter.value
+          ..innerText = filter.label
+          ..selected = filter.value == _selected.filter;
+        if (filter.value != _selected.metric) {
+          select.append(option);
+        }
+      });
 
     wrapper.append(label);
     wrapper.append(select);

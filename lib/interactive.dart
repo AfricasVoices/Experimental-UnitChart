@@ -80,6 +80,9 @@ class Interactive {
   int _chartScrollLeft = 0;
   bool _showMetacodesOnly = false;
 
+  num _totalPeopleCount = 0;
+  num _currentPeopleCount = 0;
+
   // computed people properties
   Map<String, num> _themeFrequency = {};
   List<model.Option> _xAxisCategories = [];
@@ -88,6 +91,7 @@ class Interactive {
   html.DivElement _container;
   html.SpanElement _tooltip;
   html.DivElement _filtersWrapper;
+  html.DivElement _peopleCountWrapper;
   html.DivElement _dataWrapper;
   html.DivElement _chartsColumn;
   html.DivElement _messagesColumn;
@@ -107,10 +111,12 @@ class Interactive {
     _selected = model.Selected();
     _selected.updateMetric(_filters.first.value);
     await _loadPeople();
+    _totalPeopleCount = _people.length;
     _computePeopleProperties();
 
     _filtersWrapper = html.DivElement()
       ..classes = [ROW_CSS_CLASS, FILTER_WRAPPER_CSS_CLASS];
+    _peopleCountWrapper = html.DivElement();
     _dataWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
     _chartsColumn = html.DivElement()..classes = CHART_COLUMN_CSS_CLASSES;
     _messagesColumn = html.DivElement()..classes = MESSAGES_COLUMN_CSS_CLASSES;
@@ -126,6 +132,7 @@ class Interactive {
 
     _container.nodes.clear();
     _container.append(_filtersWrapper);
+    _container.append(_peopleCountWrapper);
     _container.append(_dataWrapper);
     _container.append(_legendWrapper);
     _container.append(_switchWrapper);
@@ -240,6 +247,7 @@ class Interactive {
   void _computePeopleProperties() {
     _themeFrequency = {};
     _peopleByLabel = {};
+    _currentPeopleCount = 0;
 
     _xAxisCategories = _filters
         .firstWhere((filter) => filter.value == _selected.metric)
@@ -278,6 +286,7 @@ class Interactive {
       String primaryTheme = _getPrimaryTheme(people.themes);
       _themeFrequency[primaryTheme] ??= 0;
       ++_themeFrequency[primaryTheme];
+      ++_currentPeopleCount;
     }
   }
 
@@ -499,6 +508,12 @@ class Interactive {
   }
 
   void _renderChart() {
+    _peopleCountWrapper.nodes.clear();
+    var peopleCountLabel = html.ParagraphElement()
+      ..text =
+          "Showing $_currentPeopleCount of $_totalPeopleCount people who has data for and fit the chosen criteria.";
+    _peopleCountWrapper.append(peopleCountLabel);
+
     _chartsColumn.nodes.clear();
 
     var wrapper = html.DivElement()..classes = [CHART_WRAPPER_CSS_CLASS];

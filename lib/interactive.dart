@@ -250,7 +250,7 @@ class Interactive {
       _peopleByLabel[category.value] = List();
     }
 
-    _people.forEach((people) {
+    for (var people in _people) {
       var key;
       switch (_selected.metric) {
         case "age_category":
@@ -268,14 +268,15 @@ class Interactive {
         default:
           logger.error("Selected metric ${_selected.metric} not found");
       }
-      if (_peopleByLabel[key] != null) {
-        _peopleByLabel[key].add(people);
-        var themes = people.themes;
-        String primaryTheme = _getPrimaryTheme(themes);
-        _themeFrequency[primaryTheme] ??= 0;
-        ++_themeFrequency[primaryTheme];
-      }
-    });
+
+      if (_peopleByLabel[key] == null) continue;
+
+      _peopleByLabel[key].add(people);
+      var themes = people.themes;
+      String primaryTheme = _getPrimaryTheme(themes);
+      _themeFrequency[primaryTheme] ??= 0;
+      ++_themeFrequency[primaryTheme];
+    }
   }
 
   // User events

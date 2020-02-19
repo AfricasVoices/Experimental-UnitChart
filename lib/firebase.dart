@@ -3,6 +3,7 @@ import 'package:firebase/firestore.dart' as firestore;
 import 'firebase_constants.dart' as fb_constants;
 import 'package:avf/model.dart' as model;
 import 'package:avf/logger.dart';
+import 'package:avf/colorUtil.dart' as util;
 
 Logger logger = Logger("firebase.dart");
 
@@ -74,22 +75,24 @@ Future<List<model.Filter>> readFilters() async {
 
 Future<List<model.Theme>> readThemes() async {
   var snapshot = await _themesRef.get();
-  return snapshot
+  var themes = snapshot
       .data()
       .values
       .map((v) => model.Theme.fromFirebaseMap(v))
       .toList()
         ..sort((t1, t2) => t1.order.compareTo(t2.order));
+  return util.addColorsToTheme(themes);
 }
 
 Future<List<model.Theme>> readMetacodes() async {
   var snapshot = await _metacodesRef.get();
-  return snapshot
+  var themes = snapshot
       .data()
       .values
       .map((v) => model.Theme.fromFirebaseMap(v))
       .toList()
         ..sort((t1, t2) => t1.order.compareTo(t2.order));
+  return util.addColorsToTheme(themes);
 }
 
 Future<List<model.Person>> readPeople(String filter, String option) async {

@@ -275,8 +275,7 @@ class Interactive {
       if (_peopleByLabel[key] == null) continue;
 
       _peopleByLabel[key].add(people);
-      var themes = people.themes;
-      String primaryTheme = _getPrimaryTheme(themes);
+      String primaryTheme = _getPrimaryTheme(people.themes);
       _themeFrequency[primaryTheme] ??= 0;
       ++_themeFrequency[primaryTheme];
     }

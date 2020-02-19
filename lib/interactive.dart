@@ -160,28 +160,23 @@ class Interactive {
     width = col.clientWidth;
     container.remove();
 
-    if (width < MIN_CHART_WIDTH) {
-      width = MIN_CHART_WIDTH;
-    }
-
-    return width;
+    return width < MIN_CHART_WIDTH ? MIN_CHART_WIDTH : width;
   }
 
   String _getThemeColor(String theme) {
-    String color = "black";
-    _themes.forEach((t) {
+    String color = "silver";
+    for (var t in _themes) {
       if (t.value == theme) color = t.color;
-    });
+    }
     return color;
   }
 
   String _lookupFilterLabels(String filter, String option) {
     String label = "Unknown";
     for (var f in _filters) {
-      if (f.value != filter) continue;
-      for (var o in f.options) {
-        if (o.value == option) {
-          return o.label;
+      if (f.value == filter) {
+        for (var o in f.options) {
+          if (o.value == option) return o.label;
         }
       }
     }
@@ -194,10 +189,11 @@ class Interactive {
       for (var t in _themes) {
         if (t.value == theme) {
           labels.add(t.label);
+          break;
         }
       }
     }
-    return labels.join(", ");
+    return labels.isEmpty ? "-" : labels.join(", ");
   }
 
   List<String> _filterThemes(List<String> themes) {
@@ -206,6 +202,7 @@ class Interactive {
       for (var t in _themes) {
         if (t.value == theme) {
           labels.add(theme);
+          break;
         }
       }
     }
@@ -414,13 +411,13 @@ class Interactive {
     var select = html.SelectElement()
       ..onChange
           .listen((e) => _updateMetric((e.target as html.SelectElement).value));
-    _filters.forEach((filter) {
+    for (var filter in _filters) {
       var option = html.OptionElement()
         ..value = filter.value
         ..innerText = filter.label
         ..selected = filter.value == _selected.metric;
       select.append(option);
-    });
+    }
 
     wrapper.append(label);
     wrapper.append(select);
@@ -470,15 +467,14 @@ class Interactive {
       ..selected = _selected.option == null;
     select.append(emptyOption);
 
-    var currentFilter =
-        _filters.firstWhere((filter) => filter.value == _selected.filter);
-    currentFilter.options.forEach((filter) {
-      var option = html.OptionElement()
-        ..value = filter.value
-        ..innerText = filter.label
-        ..selected = filter.value == _selected.option;
-      select.append(option);
-    });
+    _filters.firstWhere((filter) => filter.value == _selected.filter)
+      ..options.forEach((filter) {
+        var option = html.OptionElement()
+          ..value = filter.value
+          ..innerText = filter.label
+          ..selected = filter.value == _selected.option;
+        select.append(option);
+      });
 
     wrapper.append(label);
     wrapper.append(select);
@@ -544,10 +540,9 @@ class Interactive {
               var p2Theme = _getPrimaryTheme(p2.themes);
               var p1Freq = _themeFrequency[p2Theme] ?? 0;
               var p2Freq = _themeFrequency[p1Theme] ?? 0;
-              if (p1Freq == p2Freq) {
-                return p1Theme.compareTo(p2Theme);
-              }
-              return p1Freq.compareTo(p2Freq);
+              return p1Freq == p2Freq
+                  ? p1Theme.compareTo(p2Theme)
+                  : p1Freq.compareTo(p2Freq);
             });
 
       num colOffsetPx = (i + 0.5) * (chartWidth / _xAxisCategories.length);
@@ -651,13 +646,12 @@ class Interactive {
     _themes.sort((t1, t2) {
       var t1Freq = _themeFrequency[t1.value] ?? 0;
       var t2Freq = _themeFrequency[t2.value] ?? 0;
-
-      if (t1Freq == t2Freq) {
-        return t1.value.compareTo(t2.value);
-      }
-      return t2Freq.compareTo(t1Freq);
+      return t1Freq == t2Freq
+          ? t1.value.compareTo(t2.value)
+          : t2Freq.compareTo(t1Freq);
     });
-    _themes.forEach((theme) {
+
+    for (var theme in _themes) {
       var legendColumn = html.DivElement()..classes = LEGEND_COLUMN_CSS_CLASSES;
       var legendColor = html.LabelElement()
         ..classes = [LEGEND_ITEM_CSS_CLASS]
@@ -666,7 +660,7 @@ class Interactive {
       legendColumn.append(legendColor);
 
       _legendWrapper.append(legendColumn);
-    });
+    }
   }
 
   void _renderMetacodesSwitch() {

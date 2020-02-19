@@ -63,6 +63,8 @@ const METACODE_SWITCH_LABEL_CSS_CLASS = "custom-control-label";
 const METACODE_SWITCH_ID = "metacode-switch";
 const METACODE_SWITCH_TEXT = "Show only metacodes";
 
+const KEY_THEME = "themes";
+
 // Legend CSS classes
 const LEGEND_COLUMN_CSS_CLASSES = ["col-lg-3", "col-md-4", "col-sm-6", "col-6"];
 const LEGEND_ITEM_CSS_CLASS = "legend-item";
@@ -265,6 +267,10 @@ class Interactive {
           key = people.idpStatus;
           SQ_IN_ROW = 24;
           break;
+        case KEY_THEME:
+          key = KEY_THEME;
+          SQ_IN_ROW = 48;
+          break;
         default:
           logger.error("Selected metric ${_selected.metric} not found");
       }
@@ -314,6 +320,7 @@ class Interactive {
   String _getTooltipContent(model.Person person) {
     var displayAge = person.age < 0 ? 'Unknown' : '${person.age} years';
     var displayThemes = _lookupThemeLabels(person.themes).replaceAll("_", " ");
+    var themeLabel = _showMetacodesOnly ? "Metacodes" : "Talked about";
     return """
       <table>
         <tr>
@@ -333,7 +340,7 @@ class Interactive {
           <td class='${CAPITALISE_TEXT_CSS_CLASS}'>${person.location}</td>
         </tr>
         <tr>
-          <td>Talked about</td>
+          <td>${themeLabel}</td>
           <td>${displayThemes}</td>
         </tr>
       </table>
@@ -431,15 +438,18 @@ class Interactive {
       ..value = null
       ..selected = _selected.filter == null;
     select.append(emptyOption);
-    _filters.forEach((filter) {
-      var option = html.OptionElement()
-        ..value = filter.value
-        ..innerText = filter.label
-        ..selected = filter.value == _selected.filter;
-      if (filter.value != _selected.metric) {
-        select.append(option);
-      }
-    });
+
+    List.from(_filters)
+      ..removeWhere((filter) => filter.value == KEY_THEME)
+      ..forEach((filter) {
+        var option = html.OptionElement()
+          ..value = filter.value
+          ..innerText = filter.label
+          ..selected = filter.value == _selected.filter;
+        if (filter.value != _selected.metric) {
+          select.append(option);
+        }
+      });
 
     wrapper.append(label);
     wrapper.append(select);

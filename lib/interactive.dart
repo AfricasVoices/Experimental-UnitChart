@@ -174,10 +174,9 @@ class Interactive {
   String _lookupFilterLabels(String filter, String option) {
     String label = "Unknown";
     for (var f in _filters) {
-      if (f.value == filter) {
-        for (var o in f.options) {
-          if (o.value == option) return o.label;
-        }
+      if (f.value != filter) continue;
+      for (var o in f.options) {
+        if (o.value == option) return o.label;
       }
     }
     return label;

@@ -1,7 +1,7 @@
 import 'package:avf/model.dart' as model;
 
 // todo: this is temporary, this will be moved to server
-List<List<num>> _getThemeColors(List<model.Theme> themes) {
+List<List<num>> _generateColorsCollection(num themeCount) {
   const colors = [
     [356, 55, 35],
     [13, 51, 54],
@@ -16,7 +16,7 @@ List<List<num>> _getThemeColors(List<model.Theme> themes) {
   ];
 
   var themeColors = List<List<num>>.from(colors);
-  var numIter = (themes.length / colors.length).ceil();
+  var numIter = (themeCount / colors.length).ceil();
   for (var i = 1; i <= numIter; ++i) {
     for (var j = 0; j < colors.length; ++j) {
       themeColors.add([
@@ -30,8 +30,8 @@ List<List<num>> _getThemeColors(List<model.Theme> themes) {
   return themeColors;
 }
 
-List<model.Theme> addColorsToTheme(themes) {
-  var themeColors = _getThemeColors(themes);
+List<model.Theme> addColorsToThemes(themes) {
+  var themeColors = _generateColorsCollection(themes.length);
   for (var i = 0; i < themes.length; ++i) {
     var h = themeColors[i][0];
     var s = themeColors[i][1];

@@ -81,7 +81,7 @@ Future<List<model.Theme>> readThemes() async {
       .map((v) => model.Theme.fromFirebaseMap(v))
       .toList()
         ..sort((t1, t2) => t1.order.compareTo(t2.order));
-  return util.addColorsToTheme(themes);
+  return util.addColorsToThemes(themes);
 }
 
 Future<List<model.Theme>> readMetacodes() async {
@@ -92,7 +92,7 @@ Future<List<model.Theme>> readMetacodes() async {
       .map((v) => model.Theme.fromFirebaseMap(v))
       .toList()
         ..sort((t1, t2) => t1.order.compareTo(t2.order));
-  return util.addColorsToTheme(themes);
+  return util.addColorsToThemes(themes);
 }
 
 Future<List<model.Person>> readPeople(String filter, String option) async {

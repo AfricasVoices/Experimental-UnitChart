@@ -533,8 +533,10 @@ class Interactive {
 
     for (var i = 0; i < _xAxisCategories.length; ++i) {
       // render x-axis labels
+      var xAxisLabel = _xAxisCategories[i].label;
+      var xAxisLabelCount = _peopleByLabel[_xAxisCategories[i].value].length;
       var text = svg.TextElement()
-        ..appendText(_xAxisCategories[i].label)
+        ..appendText("$xAxisLabel ($xAxisLabelCount)")
         ..classes = [XAXIS_LABEL_CSS_CLASS]
         ..setAttribute(
             "x", "${(i + 0.5) * (chartWidth / _xAxisCategories.length)}")

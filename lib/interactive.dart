@@ -17,7 +17,6 @@ const TOOLTIP_OFFSET = 25;
 var SQ_IN_ROW = 12;
 const SQ_WIDTH = 8;
 const SPACE_BTWN_SQ = 1;
-const SHOW_DOTS_IN_SQ = false;
 
 const HTML_BODY_SELECTOR = "body";
 const ROW_CSS_CLASS = "row";
@@ -80,6 +79,9 @@ class Interactive {
   int _chartScrollLeft = 0;
   bool _showMetacodesOnly = false;
 
+  num _totalPeopleCount = 0;
+  num _currentPeopleCount = 0;
+
   // computed people properties
   Map<String, num> _themeFrequency = {};
   List<model.Option> _xAxisCategories = [];
@@ -88,6 +90,7 @@ class Interactive {
   html.DivElement _container;
   html.SpanElement _tooltip;
   html.DivElement _filtersWrapper;
+  html.DivElement _peopleCountWrapper;
   html.DivElement _dataWrapper;
   html.DivElement _chartsColumn;
   html.DivElement _messagesColumn;
@@ -107,10 +110,12 @@ class Interactive {
     _selected = model.Selected();
     _selected.updateMetric(_filters.first.value);
     await _loadPeople();
+    _totalPeopleCount = _people.length;
     _computePeopleProperties();
 
     _filtersWrapper = html.DivElement()
       ..classes = [ROW_CSS_CLASS, FILTER_WRAPPER_CSS_CLASS];
+    _peopleCountWrapper = html.DivElement();
     _dataWrapper = html.DivElement()..classes = [ROW_CSS_CLASS];
     _chartsColumn = html.DivElement()..classes = CHART_COLUMN_CSS_CLASSES;
     _messagesColumn = html.DivElement()..classes = MESSAGES_COLUMN_CSS_CLASSES;
@@ -126,6 +131,7 @@ class Interactive {
 
     _container.nodes.clear();
     _container.append(_filtersWrapper);
+    _container.append(_peopleCountWrapper);
     _container.append(_dataWrapper);
     _container.append(_legendWrapper);
     _container.append(_switchWrapper);
@@ -239,6 +245,7 @@ class Interactive {
   void _computePeopleProperties() {
     _themeFrequency = {};
     _peopleByLabel = {};
+    _currentPeopleCount = 0;
 
     _xAxisCategories = _filters
         .firstWhere((filter) => filter.value == _selected.metric)
@@ -277,6 +284,7 @@ class Interactive {
       String primaryTheme = _getPrimaryTheme(people.themes);
       _themeFrequency[primaryTheme] ??= 0;
       ++_themeFrequency[primaryTheme];
+      ++_currentPeopleCount;
     }
   }
 
@@ -498,6 +506,12 @@ class Interactive {
   }
 
   void _renderChart() {
+    _peopleCountWrapper.nodes.clear();
+    var peopleCountLabel = html.ParagraphElement()
+      ..text =
+          "Showing $_currentPeopleCount of $_totalPeopleCount people who has data for and fit the chosen criteria.";
+    _peopleCountWrapper.append(peopleCountLabel);
+
     _chartsColumn.nodes.clear();
 
     var wrapper = html.DivElement()..classes = [CHART_WRAPPER_CSS_CLASS];
@@ -518,8 +532,10 @@ class Interactive {
 
     for (var i = 0; i < _xAxisCategories.length; ++i) {
       // render x-axis labels
+      var xAxisLabel = _xAxisCategories[i].label;
+      var xAxisLabelCount = _peopleByLabel[_xAxisCategories[i].value].length;
       var text = svg.TextElement()
-        ..appendText(_xAxisCategories[i].label)
+        ..appendText("$xAxisLabel ($xAxisLabelCount)")
         ..classes = [XAXIS_LABEL_CSS_CLASS]
         ..setAttribute(
             "x", "${(i + 0.5) * (chartWidth / _xAxisCategories.length)}")
@@ -573,15 +589,20 @@ class Interactive {
           ..setAttribute("stroke-width", SPACE_BTWN_SQ.toString());
         sqGroup.append(square);
 
-        if (SHOW_DOTS_IN_SQ == true && themes.length > 1) {
-          String secondaryTheme = themes[1];
-          var circle = svg.CircleElement()
-            ..setAttribute("cx", (x + (SQ_WIDTH / 2)).toString())
-            ..setAttribute("cy", (y + (SQ_WIDTH / 2)).toString())
-            ..setAttribute("r", (SQ_WIDTH / 6).toString())
-            ..setAttribute("fill", _getThemeColor(secondaryTheme))
+        if (themes.length > 1) {
+          num x1 = x + SQ_WIDTH - 0.5;
+          num y1 = y + 0.5;
+          num x2 = x1;
+          num y2 = y1 + SQ_WIDTH / 2;
+          num x3 = x1 - SQ_WIDTH / 2;
+          num y3 = y1;
+
+          var triangle = svg.PolygonElement()
+            ..setAttribute("points", "$x1,$y1 $x2,$y2 $x3,$y3")
+            ..setAttribute("fill", "rgba(0, 0, 0, 0.5)")
             ..setAttribute("pointer-events", "none");
-          sqGroup.append(circle);
+
+          sqGroup.append(triangle);
         }
 
         colSVG.append(sqGroup);

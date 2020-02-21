@@ -17,7 +17,6 @@ const TOOLTIP_OFFSET = 25;
 var SQ_IN_ROW = 12;
 const SQ_WIDTH = 8;
 const SPACE_BTWN_SQ = 1;
-const SHOW_DOTS_IN_SQ = false;
 
 const HTML_BODY_SELECTOR = "body";
 const ROW_CSS_CLASS = "row";
@@ -534,8 +533,10 @@ class Interactive {
 
     for (var i = 0; i < _xAxisCategories.length; ++i) {
       // render x-axis labels
+      var xAxisLabel = _xAxisCategories[i].label;
+      var xAxisLabelCount = _peopleByLabel[_xAxisCategories[i].value].length;
       var text = svg.TextElement()
-        ..appendText(_xAxisCategories[i].label)
+        ..appendText("$xAxisLabel ($xAxisLabelCount)")
         ..classes = [XAXIS_LABEL_CSS_CLASS]
         ..setAttribute(
             "x", "${(i + 0.5) * (chartWidth / _xAxisCategories.length)}")
@@ -589,15 +590,20 @@ class Interactive {
           ..setAttribute("stroke-width", SPACE_BTWN_SQ.toString());
         sqGroup.append(square);
 
-        if (SHOW_DOTS_IN_SQ == true && themes.length > 1) {
-          String secondaryTheme = themes[1];
-          var circle = svg.CircleElement()
-            ..setAttribute("cx", (x + (SQ_WIDTH / 2)).toString())
-            ..setAttribute("cy", (y + (SQ_WIDTH / 2)).toString())
-            ..setAttribute("r", (SQ_WIDTH / 6).toString())
-            ..setAttribute("fill", _getThemeColor(secondaryTheme))
+        if (themes.length > 1) {
+          num x1 = x + SQ_WIDTH - 0.5;
+          num y1 = y + 0.5;
+          num x2 = x1;
+          num y2 = y1 + SQ_WIDTH / 2;
+          num x3 = x1 - SQ_WIDTH / 2;
+          num y3 = y1;
+
+          var triangle = svg.PolygonElement()
+            ..setAttribute("points", "$x1,$y1 $x2,$y2 $x3,$y3")
+            ..setAttribute("fill", "rgba(0, 0, 0, 0.5)")
             ..setAttribute("pointer-events", "none");
-          sqGroup.append(circle);
+
+          sqGroup.append(triangle);
         }
 
         colSVG.append(sqGroup);

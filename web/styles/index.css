@@ -195,9 +195,34 @@ nav a:hover {
   text-transform: capitalize;
 }
 
-.custom-switch {
+.themes-metacodes-switch {
   padding-top: 24px;
-  padding-left: 45px;
+  margin-left: 15px;
+}
+
+.themes-metacodes-switch span {
+  padding: 6px 12px;
+  border: 1px solid #888;
+}
+
+.themes-metacodes-switch span:hover {
+  padding: 6px 12px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid #888;
+  cursor: pointer;
+}
+
+.themes-metacodes-switch span.is-active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.themes-metacodes-switch span:first-child {
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+}
+
+.themes-metacodes-switch span:last-child {
+  border-radius: 0 3px 3px 0;
 }
 
 /* Login modal */

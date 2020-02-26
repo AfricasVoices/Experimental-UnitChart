@@ -56,11 +56,10 @@ const MESSAGES_LABEL = "Messages";
 const MESSAGES_PLACEHOLDER_TEXT =
     "Click on square to view messages between the person and Africa's voices's team.";
 
-const METACODE_SWITCH_CONTAINER_CSS_CLASS = "custom-switch";
-const METACODE_SWITCH_INPUT_CSS_CLASS = "custom-control-input";
-const METACODE_SWITCH_LABEL_CSS_CLASS = "custom-control-label";
-const METACODE_SWITCH_ID = "metacode-switch";
-const METACODE_SWITCH_TEXT = "Show only metacodes";
+const METACODE_SWITCH_CONTAINER_CSS_CLASS = "themes-metacodes-switch";
+const THEMES_SWITCH_TEXT = "Themes";
+const METACODE_SWITCH_TEXT = "Metacodes";
+const IS_ACTIVE_CSS_CLASS = "is-active";
 
 const KEY_THEME = "themes";
 
@@ -389,8 +388,10 @@ class Interactive {
     _renderMessages();
   }
 
-  void _handleMetacodeSwitch() async {
-    _showMetacodesOnly = !_showMetacodesOnly;
+  void _updateMetacodeSwitch(bool showMetacode) async {
+    if (_showMetacodesOnly == showMetacode) return;
+
+    _showMetacodesOnly = showMetacode;
     await _loadThemes();
     await _loadPeople();
     _computePeopleProperties();
@@ -398,6 +399,7 @@ class Interactive {
     _renderLegend();
     _messages = null;
     _renderMessages();
+    _renderMetacodesSwitch();
   }
 
   void _clearSelectedPerson() {
@@ -508,8 +510,7 @@ class Interactive {
   void _renderChart() {
     _peopleCountWrapper.nodes.clear();
     var peopleCountLabel = html.ParagraphElement()
-      ..text =
-          "Showing $_currentPeopleCount of $_totalPeopleCount people who has data for and fit the chosen criteria.";
+      ..text = "Showing $_currentPeopleCount of $_totalPeopleCount people.";
     _peopleCountWrapper.append(peopleCountLabel);
 
     _chartsColumn.nodes.clear();
@@ -688,25 +689,18 @@ class Interactive {
     var switchContainer = html.DivElement()
       ..classes = [METACODE_SWITCH_CONTAINER_CSS_CLASS];
 
-    var switchControl = html.InputElement()
-      ..classes = [METACODE_SWITCH_INPUT_CSS_CLASS]
-      ..type = "checkbox"
-      ..id = METACODE_SWITCH_ID
-      ..onChange.listen((_) => _handleMetacodeSwitch());
+    var themeLabel = html.SpanElement()
+      ..innerText = (_showMetacodesOnly ? "" : "✔ ") + THEMES_SWITCH_TEXT
+      ..className = _showMetacodesOnly ? "" : IS_ACTIVE_CSS_CLASS
+      ..onClick.listen((_) => _updateMetacodeSwitch(false));
+    var metaLabel = html.SpanElement()
+      ..innerText = (_showMetacodesOnly ? "✔ " : "") + METACODE_SWITCH_TEXT
+      ..className = _showMetacodesOnly ? IS_ACTIVE_CSS_CLASS : ""
+      ..onClick.listen((_) => _updateMetacodeSwitch(true));
 
-    if (_showMetacodesOnly) {
-      switchControl.setAttribute("checked", "true");
-    } else {
-      switchControl.removeAttribute("checked");
-    }
+    switchContainer.append(themeLabel);
+    switchContainer.append(metaLabel);
 
-    var switchLabel = html.LabelElement()
-      ..classes = [METACODE_SWITCH_LABEL_CSS_CLASS]
-      ..htmlFor = METACODE_SWITCH_ID
-      ..innerText = METACODE_SWITCH_TEXT;
-
-    switchContainer.append(switchControl);
-    switchContainer.append(switchLabel);
     _switchWrapper.append(switchContainer);
   }
 }
